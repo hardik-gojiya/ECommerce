@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Category } from "./Category.model.js";
 
 const productSchema = new mongoose.Schema(
   {
@@ -11,6 +12,11 @@ const productSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
+      required: true,
+    },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Category,
       required: true,
     },
   },
