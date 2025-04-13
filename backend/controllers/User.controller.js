@@ -4,10 +4,16 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
+import { nodeMailerFunc } from "../utils/mailer.util.js";
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
+};
+
+const generateOtp = () => {
+  return Math.floor(10000 + Math.random() * 90000);
 };
 
 const registerUser = async (req, res) => {
@@ -101,4 +107,56 @@ const logout = async (req, res) => {
   }
 };
 
-export { registerUser, login, logout };
+const editUserProfile = async (req, res) => {
+  const { name, email, password, phone, address } = req.body;
+  let userid = req.params.id;
+
+  try {
+    let user = await User.findByIdAndUpdate(userid, {
+      name,
+      email,
+      password,
+      phone,
+      address,
+    });
+    if (!user) {
+      return res.status(400).json({ error: "error while updating profile" });
+    }
+    return res.status(201).json({ message: "user updated sucessfully", user });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const updateProfilePassword = async (req, res) => {
+  const userid = req.params.id;
+  const { oldpassword, newpassword } = req.body;
+
+  if (userid.toString() != req.user._id.toString()) {
+    return res.status(400).json({ error: "you only change your password" });
+  }
+
+  try {
+    let user = await User.findById(userid);
+    if (!user) {
+      return res.status(404).json({ error: "user not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(oldpassword, user.password);
+    if (!isPasswordValid) {
+      return res
+        .status(400)
+        .json({ error: "password doesn't match to your old password" });
+    }
+    const hashedPassword = await bcrypt.hash(newpassword, 10);
+    user.password = hashedPassword;
+    user.save();
+    return res.status(200).json({ message: "passsword updated succesfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
+export { registerUser, login, logout, editUserProfile, updateProfilePassword };

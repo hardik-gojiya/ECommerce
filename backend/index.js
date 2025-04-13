@@ -30,6 +30,9 @@ app.use("/api/category", categoryRoutes);
 import cartRoutes from "./routes/cart.route.js";
 app.use("/api/cart", cartRoutes);
 
+import orderRoute from "./routes/order.route.js";
+app.use("/api/order", orderRoute);
+
 app.use((err, req, res, next) => {
   console.error("Error:", err.message);
   if (err.type === "entity.parse.failed") {

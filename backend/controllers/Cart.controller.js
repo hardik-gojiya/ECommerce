@@ -50,4 +50,59 @@ const getCart = async (req, res) => {
   return res.status(200).json(cart);
 };
 
-export { addToCart, getCart };
+const removeItemFromCart = async (req, res) => {
+  const user = req.user;
+  const { productid } = req.body;
+  if (!productid) {
+    return res.status(400).json({ error: "productid require" });
+  }
+
+  try {
+    let userCart = await Cart.findOne({ user: user });
+
+    let findProduct = userCart.items.find(
+      (i) => i.product.toString() === productid
+    );
+
+    if (!findProduct) {
+      return res.status(404).json({ error: "product not found" });
+    }
+
+    userCart.items.pop({ productid });
+    userCart.save();
+
+    return res
+      .status(200)
+      .json({ message: "item remove successfully", userCart });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
+const decreseQunatityOfProductbyOne = async (req, res) => {
+  const productid = req.params.id;
+  const user = req.user;
+
+  let usercart = await Cart.findOne({ user: user });
+
+  if (!usercart) {
+    return res.status(404).json({ error: "cart not find" });
+  }
+
+  for (let item of usercart.items) {
+    if (item.product.toString() === productid) {
+      item.quantity -= 1;
+    }
+  }
+
+  await usercart.save();
+  return res.status(200).json({ message: "qunatity decrese by 1", usercart });
+};
+
+export {
+  addToCart,
+  getCart,
+  removeItemFromCart,
+  decreseQunatityOfProductbyOne,
+};

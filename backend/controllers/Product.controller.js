@@ -10,7 +10,7 @@ const addProduct = async (req, res) => {
   }
 
   try {
-    var findcategory = await Category.findOne({ name: category });
+    let findcategory = await Category.findOne({ name: category });
 
     if (!findcategory) {
       findcategory = new Category({
@@ -68,4 +68,43 @@ const getProductById = async (req, res) => {
   }
 };
 
-export { addProduct, fetchAllProducts, getProductById };
+const updateProduct = async (req, res) => {
+  const productid = req.params.id;
+  const { name, description, price, category } = req.body;
+
+  if (req.user.role != "admin") {
+    return res.status(400).json({ error: "only admin can update product" });
+  }
+
+  try {
+    let product = await Products.findById(productid);
+
+    if (!product) {
+      return res.status(404).json({ error: "product not found" });
+    }
+
+    product.name = name;
+    product.description = description;
+    product.price = price;
+
+    let findcategory = await Category.findOne({ name: category });
+
+    if (!findcategory) {
+      findcategory = new Category({
+        name: category,
+      });
+      await findcategory.save();
+    }
+
+    product.category = findcategory;
+    await product.save();
+    return res
+      .status(200)
+      .json({ message: "procuct updated sccussesfully", product });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
+export { addProduct, fetchAllProducts, getProductById, updateProduct };
