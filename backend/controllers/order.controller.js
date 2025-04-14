@@ -1,7 +1,8 @@
 import { Cart } from "../models/Cart.model.js";
 import { Order } from "../models/Order.model.js";
+import { Products } from "../models/product.model.js";
 
-const createOrder = async (req, res) => {
+const createOrderForCart = async (req, res) => {
   const { shippingAdress } = req.body;
   const user = req.user;
   try {
@@ -37,4 +38,94 @@ const createOrder = async (req, res) => {
   }
 };
 
-export { createOrder };
+const createOrderForOneProduct = async (req, res) => {
+  const user = req.user;
+  const productid = req.params.id;
+  let { shippingAdress, quantity } = req.body;
+  if (!shippingAdress) {
+    return res.status(400).json({ error: "shipping adress require" });
+  }
+  if (!quantity) {
+    quantity = 1;
+  }
+
+  try {
+    const product = await Products.findOne({ _id: productid });
+    if (!product) {
+      return res.status(404).json({ error: "product not found" });
+    }
+
+    const order = new Order({
+      user: user,
+      items: [
+        {
+          product: product,
+          quantity: quantity,
+        },
+      ],
+      shippingAdress,
+      totalAmount: product.price * quantity,
+    });
+
+    if (!order) {
+      return res.status(400).json({ error: "error while creating order" });
+    }
+    await order.save();
+    return res
+      .status(201)
+      .json({ message: "order created successfully", order });
+  } catch (error) {
+    console.log(error);
+    return res.status(505).json({ error: "Internal server error" });
+  }
+};
+
+const getAllOrderOfUser = async (req, res) => {
+  const userid = req.params.id;
+
+  if (req.user._id.toString() != userid.toString()) {
+    return res.status(400).json({ error: "you can see only your orders" });
+  }
+
+  const orders = await Order.find({ user: req.user });
+  if (!orders) {
+    return res.status(404).json({ error: "no Order Found" });
+  }
+  return res.status(200).json({ message: "orders fetch successfully", orders });
+};
+
+const cancleOrder = async (req, res) => {
+  const orderid = req.params.id;
+
+  try {
+    let order = await Order.findOne({ _id: orderid });
+    if (!order) {
+      return res.status(404).json({ error: "order not found" });
+    }
+
+    if (req.user._id.toString() != order.user.toString()) {
+      return res.status(400).json({ error: "you can cancle only your orders" });
+    }
+
+    if (order.status === "Delivered") {
+      return res.status(400).json({ error: "your order is delivered" });
+    }
+    if (order.status === "Cancelled") {
+      return res.status(400).json({ error: "you already cancle this order" });
+    }
+
+    order.status = "Cancelled";
+    await order.save();
+    return res.status(200).json({ message: "order Cancelled", order });
+  } catch (error) {
+    console.log(error);
+    return res.status(505).json({ error: "Internal server error" });
+  }
+};
+
+export { 
+  createOrderForCart,
+  createOrderForOneProduct,
+  getAllOrderOfUser,
+  cancleOrder,
+};

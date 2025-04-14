@@ -30,7 +30,7 @@ const orderSchema = new mongoose.Schema(
         postalCode: String,
         country: String,
     },
-    totalAmount: Number,
+    totalAmount: Number,  
     status: {
       type: String,
       enum: ["Processing", "Shipped", "Delivered", "Cancelled"],
