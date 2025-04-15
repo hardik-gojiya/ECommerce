@@ -22,7 +22,9 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ error: "email and password require" });
   }
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+      $or: [{ email: email }, { phone: phone }],
+    });
     if (user) {
       return res.status(400).json({ error: "User already exists" });
     }
@@ -108,20 +110,32 @@ const logout = async (req, res) => {
 };
 
 const editUserProfile = async (req, res) => {
-  const { name, email, password, phone, address } = req.body;
+  const { name, email, phone, address } = req.body;
   let userid = req.params.id;
 
   try {
-    let user = await User.findByIdAndUpdate(userid, {
-      name,
-      email,
-      password,
-      phone,
-      address,
-    });
+    let user = await User.findById(userid).select("-password");
+
     if (!user) {
-      return res.status(400).json({ error: "error while updating profile" });
+      return res.status(400).json({ error: "user not found" });
     }
+    const asmobuser = await User.findOne({
+      phone: phone,
+    }).select("-password");
+    const asemuser = await User.findOne({
+      email,
+    }).select("-password");
+    if (asmobuser && asmobuser._id.toString() != user._id.toString()) {
+      return res.status(400).json({ error: " mobile no already exists" });
+    }
+    if (asemuser && asemuser._id.toString() != user._id.toString()) {
+      return res.status(400).json({ error: "email already exists" });
+    }
+    user.name = name;
+    user.email = email;
+    user.phone = phone;
+    user.address = address;
+    await user.save();
     return res.status(201).json({ message: "user updated sucessfully", user });
   } catch (error) {
     console.log(error);
@@ -159,4 +173,63 @@ const updateProfilePassword = async (req, res) => {
   }
 };
 
-export { registerUser, login, logout, editUserProfile, updateProfilePassword };
+const addNewAdmin = async (req, res) => {
+  const loginuser = req.user;
+  const { name, email, phone, password, address } = req.body;
+
+  if (!name || !email || !phone || !password || !address) {
+    return res.status(400).json({ error: "all fields are required" });
+  }
+
+  if (loginuser.role != "master admin") {
+    return res
+      .status(400)
+      .json({ error: "only master admin can add new admin" });
+  }
+  try {
+    let user = await User.findOne({
+      $and: [{ role: "admin" }, { $or: [{ email: email }, { phone: phone }] }],
+    }).select("-password");
+    console.log(user);
+    if (user) {
+      return res.status(400).json({
+        error: "admin already exists or phone number or email already exists",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let newuser = new User({
+      role: "admin",
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+      address,
+    });
+
+    if (!newuser) {
+      return res.status(400).json({ error: "admin doesn't created" });
+    }
+    await newuser.save();
+    const sendUser = await User.findOne({ email: newuser.email }).select(
+      "-password"
+    );
+    if (!sendUser) {
+      return res.status(404).json({ error: "admin not found after created" });
+    }
+    return res
+      .status(201)
+      .json({ error: "admin created successfully", sendUser });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
+export {
+  registerUser,
+  login,
+  logout,
+  editUserProfile,
+  updateProfilePassword,
+  addNewAdmin,
+};

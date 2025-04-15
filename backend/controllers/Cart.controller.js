@@ -11,6 +11,10 @@ const addToCart = async (req, res) => {
 
   try {
     let cart = await Cart.findOne({ user: user }).populate("items");
+    let product = await Products.findById(productid);
+    if (!product) {
+      return res.status(404).json({ error: "product not found" });
+    }
     if (!cart) {
       cart = new Cart({
         user: user,

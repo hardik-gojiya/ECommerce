@@ -3,8 +3,10 @@ import { AuthMiddleware } from "../middlewares/auth.middleware.js";
 import {
   createOrderForCart,
   createOrderForOneProduct,
-  getAllOrderOfUser,
+  getAllOrderOfOneUser,
   cancleOrder,
+  getAllOrderforAdmin,
+  changeStatusofOrderByAdmin,
 } from "../controllers/order.controller.js";
 
 const router = Router();
@@ -15,7 +17,13 @@ router.post(
   AuthMiddleware,
   createOrderForOneProduct
 );
-router.get("/getAllOrderOfUser/:id", AuthMiddleware, getAllOrderOfUser);
+router.get("/getAllOrderforAdmin", AuthMiddleware, getAllOrderforAdmin);
+router.get("/getAllOrderOfUser/:id", AuthMiddleware, getAllOrderOfOneUser);
 router.post("/cancleOrder/:id", AuthMiddleware, cancleOrder);
+router.post(
+  "/changeStatusofOrderByAdmin",
+  AuthMiddleware,
+  changeStatusofOrderByAdmin
+);
 
 export default router;

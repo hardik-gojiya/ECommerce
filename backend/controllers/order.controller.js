@@ -80,7 +80,24 @@ const createOrderForOneProduct = async (req, res) => {
   }
 };
 
-const getAllOrderOfUser = async (req, res) => {
+const getAllOrderforAdmin = async (req, res) => {
+  const loginuser = req.user;
+  if (loginuser.role === "user") {
+    return res.status(400).json({ error: "only admin can see all orders" });
+  }
+  try {
+    const orders = await Order.find();
+    if (!orders) {
+      return res.status(404).json({ error: "no order was found" });
+    }
+    return res.status(200).json(orders);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
+const getAllOrderOfOneUser = async (req, res) => {
   const userid = req.params.id;
 
   if (req.user._id.toString() != userid.toString()) {
@@ -123,9 +140,37 @@ const cancleOrder = async (req, res) => {
   }
 };
 
-export { 
+const changeStatusofOrderByAdmin = async (req, res) => {
+  const { orderid, status } = req.body;
+  if (req.user === "user") {
+    return res
+      .status(400)
+      .json({ error: "only admin can change status of orders" });
+  }
+  try {
+    let order = await Order.findById(orderid);
+    if (!order) {
+      return res.status(404).json({ error: "order not found" });
+    }
+    if (order.status === "Cancelled") {
+      return res.status(400).json({ error: "order is cancelled" });
+    }
+    order.status = status;
+    await order.save();
+    return res
+      .status(200)
+      .json({ message: "status changed sucessfully", order });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
+export {
   createOrderForCart,
   createOrderForOneProduct,
-  getAllOrderOfUser,
+  getAllOrderOfOneUser,
   cancleOrder,
+  getAllOrderforAdmin,
+  changeStatusofOrderByAdmin,
 };

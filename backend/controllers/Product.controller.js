@@ -7,7 +7,7 @@ import {
 
 const addProduct = async (req, res) => {
   const { name, description, price, category } = req.body;
-  const localfilepath = req.file.path;
+  const localfilepath = req.file?.path;
 
   const user = req.user;
   if (user.role != "admin") {
@@ -81,7 +81,7 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
   const productid = req.params.id;
   const { name, description, price, category } = req.body;
-  const newimage = req.file.path;
+  const newimage = req.file?.path;
 
   if (req.user.role != "admin") {
     return res.status(400).json({ error: "only admin can update product" });
