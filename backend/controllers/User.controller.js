@@ -109,6 +109,39 @@ const logout = async (req, res) => {
   }
 };
 
+const checkAuth = async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ message: "You are already logout" });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({ _id: decodedToken.id }).select(
+      "-password"
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      isLoggedIn: true,
+      userId: user._id,
+      role: user.role,
+      email: user.email,
+      mobileno: user.mobileno,
+      name: user.name || "",
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
+  } catch (error) {
+    console.log("error in AuthMiddleware ", error);
+    return res.status(400).json({ message: "Invalid token" });
+  }
+};
+
 const editUserProfile = async (req, res) => {
   const { name, email, phone, address } = req.body;
   let userid = req.params.id;
@@ -232,4 +265,5 @@ export {
   editUserProfile,
   updateProfilePassword,
   addNewAdmin,
+  checkAuth,
 };

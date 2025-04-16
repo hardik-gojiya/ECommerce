@@ -67,11 +67,11 @@ const getProductById = async (req, res) => {
   }
 
   try {
-    const product = await Products.findById(id).populate("category");
+    const product = await Products.findById(id);
     if (!product) {
       return res.status(404).json({ error: "product not found" });
     }
-    res.json(product);
+    res.json({ product: product });
   } catch (error) {
     console.log("error while fatching product by id", error);
     return res.status(500).json({ error: "internal server error" });
@@ -144,10 +144,28 @@ const deleteProduct = async (req, res) => {
   return res.status(200).json({ error: "product deleted successfully" });
 };
 
+const fetchProductByCategory = async (req, res) => {
+  const categoryid = req.params.id;
+
+  let category = await Category.findById(categoryid);
+  if (!category) {
+    return res.status(404).json({ error: "category not found" });
+  }
+
+  let products = await Products.find({ category: category });
+  if (!products) {
+    return res.json(404).json({ error: "no product found of this category" });
+  }
+  return res
+    .status(200)
+    .json({ categoryName: category.name, products: products });
+};
+
 export {
   addProduct,
   fetchAllProducts,
   getProductById,
   updateProduct,
   deleteProduct,
+  fetchProductByCategory,
 };

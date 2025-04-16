@@ -33,7 +33,7 @@ const getAllCategories = async (req, res) => {
     if (!catagories) {
       return res.status(404).json({ error: "no catagories found " });
     }
-    return res.send(catagories);
+    return res.send({ catagories: catagories });
   } catch (error) {
     console.log("error while fetch catgories", error);
     return res.status(500).json({ error: "internal server error" });
