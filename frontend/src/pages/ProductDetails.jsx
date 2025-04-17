@@ -1,32 +1,34 @@
 import { useParams } from "react-router-dom";
-import api from "../services/api";
+import api, { fetchOneProduct } from "../services/api";
 import { useState, useEffect } from "react";
+import Loader from "../components/Loader";
+import { useToast } from "../context/ToastContext";
 
 export default function ProductDetails() {
+  const { showSuccess, showError } = useToast();
+
   const { id } = useParams();
-  console.log(id);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await api.get(`/products/getProductById/${id}`);
-        setProduct(res.data.product);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [id]);
+  const addtoCartHandle = async (id) => {
+    try {
+      setLoading(true);
+      let res = await api.post(`/cart/addToCart`, { productid: id, quantity: 1 });
+      showSuccess(res.data.message);
+    } catch (error) {
+      showError(error?.response?.data?.error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const buyProductHandle = async (id) => {
+    alert(id);
+  };
 
-  if (loading) {
-    return (
-      <p className="text-center mt-10 text-gray-500">Loading product...</p>
-    );
-  }
+  useEffect(() => {
+    fetchOneProduct({ id, setProduct, setLoading });
+  }, [id]);
 
   if (!product) {
     return <p className="text-center mt-10 text-red-500">Product not found.</p>;
@@ -34,6 +36,7 @@ export default function ProductDetails() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto flex flex-col md:flex-row gap-8">
+      {loading && <Loader />}
       <img
         src={product.image}
         alt={product.name}
@@ -57,10 +60,16 @@ export default function ProductDetails() {
             </span>
           </p>
         </div>
-        <button className="mt-6 px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+        <button
+          onClick={() => addtoCartHandle(product._id)}
+          className="mt-6 px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        >
           Add to Cart
         </button>
-        <button className="mt-6 px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+        <button
+          onClick={() => buyProductHandle(product._id)}
+          className="mt-6 px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        >
           Buy
         </button>
       </div>

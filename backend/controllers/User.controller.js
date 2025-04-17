@@ -131,7 +131,8 @@ const checkAuth = async (req, res) => {
       userId: user._id,
       role: user.role,
       email: user.email,
-      mobileno: user.mobileno,
+      phone: user.phone,
+      address: user.address,
       name: user.name || "",
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -210,7 +211,7 @@ const addNewAdmin = async (req, res) => {
   const loginuser = req.user;
   const { name, email, phone, password, address } = req.body;
 
-  if (!name || !email || !phone || !password || !address) {
+  if (!name || !email || !phone || !password ) {
     return res.status(400).json({ error: "all fields are required" });
   }
 

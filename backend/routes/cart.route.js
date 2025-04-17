@@ -10,7 +10,7 @@ import { AuthMiddleware } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.post("/addToCart", AuthMiddleware, addToCart);
-router.get("/getCart/:id", AuthMiddleware, getCart);
+router.get("/getCart/:userId", AuthMiddleware, getCart);
 router.delete("/removeItemFromCart", AuthMiddleware, removeItemFromCart);
 router.delete(
   "/decreseQunatityOfProductbyOne/:id",

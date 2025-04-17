@@ -9,8 +9,12 @@ const addProduct = async (req, res) => {
   const { name, description, price, category } = req.body;
   const localfilepath = req.file?.path;
 
+  if (!name || !description || !price || !category || !localfilepath) {
+    return res.status(400).json({ error: "all fields are require" });
+  }
+
   const user = req.user;
-  if (user.role != "admin") {
+  if (user.role === "user") {
     return res.status(400).json({ error: "only admin can add product" });
   }
 
@@ -36,7 +40,7 @@ const addProduct = async (req, res) => {
       category: findcategory,
     });
     if (!product) {
-      return res.status(400).json({ error: "Product added succesfully" });
+      return res.status(400).json({ error: "error while adding project" });
     }
     product.save();
 
@@ -52,7 +56,7 @@ const addProduct = async (req, res) => {
 const fetchAllProducts = async (req, res) => {
   try {
     const products = await Products.find().populate("category");
-    res.json(products);
+    res.json({ products: products });
   } catch (error) {
     console.log("error while fatching products", error);
     return res.status(500).json({ error: "internal server error" });
@@ -83,7 +87,7 @@ const updateProduct = async (req, res) => {
   const { name, description, price, category } = req.body;
   const newimage = req.file?.path;
 
-  if (req.user.role != "admin") {
+  if (req.user.role === "user") {
     return res.status(400).json({ error: "only admin can update product" });
   }
 
@@ -133,7 +137,7 @@ const deleteProduct = async (req, res) => {
   const productid = req.params.id;
 
   const user = req.user;
-  if (user.role != "admin") {
+  if (user.role === "user") {
     return res.status(400).json({ error: "only admin can delete product" });
   }
 

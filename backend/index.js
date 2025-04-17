@@ -15,11 +15,8 @@ var corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(
-  express.json({
-    strict: false,
-  })
-);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 connectDB();
 

@@ -13,7 +13,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 const router = Router();
 
 router.post("/addProduct", upload.single("image"), AuthMiddleware, addProduct);
-router.get("/getAllProducts", AuthMiddleware, fetchAllProducts);
+router.get("/getAllProducts", fetchAllProducts);
 router.get("/getProductById/:id", AuthMiddleware, getProductById);
 router.put(
   "/updateProduct/:id",
@@ -22,6 +22,6 @@ router.put(
   updateProduct
 );
 router.delete("/deleteProduct/:id", AuthMiddleware, deleteProduct);
-router.get("/fetchProductByCategory/:id", AuthMiddleware, fetchProductByCategory);
+router.get("/fetchProductByCategory/:id", fetchProductByCategory);
 
 export default router;

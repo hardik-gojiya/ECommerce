@@ -46,12 +46,16 @@ const addToCart = async (req, res) => {
 };
 
 const getCart = async (req, res) => {
-  const user = req.params.id;
-  let cart = await Cart.findOne({ user: user }).populate("items.product");
-  if (!cart) {
-    console.log("cart not found");
+  const user = req.params.userId;
+  try {
+    let cart = await Cart.findOne({ user: user }).populate("items.product");
+    if (!cart) {
+      return res.status(404).json({ cart: [] });
+    }
+    return res.status(200).json({ cart:cart });
+  } catch (error) {
+    return res.status(500).json({ error: "internal server error" });
   }
-  return res.status(200).json(cart);
 };
 
 const removeItemFromCart = async (req, res) => {

@@ -5,10 +5,12 @@ import ProfileMenu from "./ProfileMenu";
 
 export default function Navbar() {
   const { islogedin, handlelogOut } = useLogin();
-  
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-md p-4">
+    <nav
+      className="bg-white sticky top-0
+     dark:bg-gray-900 shadow-md p-4"
+    >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link
           to="/"

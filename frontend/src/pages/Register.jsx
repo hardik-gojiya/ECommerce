@@ -1,9 +1,13 @@
 import { useState } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
+import { useToast } from "../context/ToastContext";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { showSuccess, showError } = useToast();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,16 +22,20 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const res = await api.post("/user/register", formData);
-      alert(res?.data?.message || "Registered successfully");
+      showSuccess(res?.data?.message || "Registered successfully");
       navigate("/login");
     } catch (error) {
-      alert(error.response?.data?.error || "Registration failed");
+      showError(error.response?.data?.error || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      {loading && <Loader />}
       <form
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-xl shadow-md w-full max-w-md space-y-4"

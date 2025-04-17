@@ -10,6 +10,7 @@ cloudinary.config({
 });
 
 const uploadOnClodinary = async (localfilepath) => {
+
   try {
     const upload = await cloudinary.uploader.upload(localfilepath, {
       folder: "ECommerce",

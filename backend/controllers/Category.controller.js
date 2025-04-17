@@ -4,7 +4,7 @@ const addCategory = async (req, res) => {
   const { name } = req.body;
   const user = req.user;
 
-  if (user.role != "admin") {
+  if (user.role === "user") {
     return res.status(400).json({ error: "only admin can add category" });
   }
 

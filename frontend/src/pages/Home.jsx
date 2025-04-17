@@ -2,29 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 
-const dummyProducts = [
-  {
-    id: 1,
-    name: "Smart Watch",
-    price: "₹2,499",
-    image: "https://via.placeholder.com/200x200?text=Watch",
-  },
-  {
-    id: 2,
-    name: "Wireless Earbuds",
-    price: "₹1,999",
-    image: "https://via.placeholder.com/200x200?text=Earbuds",
-  },
-  {
-    id: 3,
-    name: "Backpack",
-    price: "₹1,299",
-    image: "https://via.placeholder.com/200x200?text=Backpack",
-  },
-];
-
 export default function Home() {
   const [categories, setCategories] = useState([]);
+  const [dummyProducts, setDummyProducts] = useState([]);
 
   const fetchCategories = async () => {
     try {
@@ -35,8 +15,18 @@ export default function Home() {
     }
   };
 
+  const fetchHomeProducts = async () => {
+    try {
+      let res = await api.get("/products/getAllProducts");
+      setDummyProducts(res.data.products || []);
+    } catch (error) {
+      alert(error?.res.error);
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
+    fetchHomeProducts();
   }, []);
 
   return (
@@ -67,10 +57,14 @@ export default function Home() {
             <Link
               to={`/category/${category._id}`}
               key={category._id}
-              className="group block bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition"
+              className="group block bg-white rounded-lg shadow-md hover:shadow-lg transition"
             >
-              <div className="p-3">
-                <h3 className="text-sm font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 transition">
+              <div className="p-3 text-center">
+                {/* Font Awesome Icon */}
+                <i
+                  className={`fas fa-${category.icon} text-4xl text-blue-600 group-hover:text-blue-700 transition`}
+                ></i>
+                <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition mt-2">
                   {category.name}
                 </h3>
               </div>
@@ -79,28 +73,29 @@ export default function Home() {
       </div>
 
       {/* Featured Products */}
-      <h2 className="text-xl font-semibold mb-4 text-gray-800 ">
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">
         Featured Products
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {dummyProducts.map((product) => (
-          <div
-            key={product.id}
-            className="border rounded-lg p-4 shadow hover:shadow-md transition bg-white dark:bg-gray-900"
+          <Link
+            to={`/product/${product._id}`}
+            key={product._id}
+            className="border rounded-lg p-4 shadow hover:shadow-md transition bg-white"
           >
             <img
               src={product.image}
               alt={product.name}
               className="w-full h-40 object-cover mb-4 rounded"
             />
-            <h3 className="text-lg font-medium text-gray-800 dark:text-white">
+            <h3 className="text-lg font-medium text-gray-800">
               {product.name}
             </h3>
             <p className="text-blue-600 font-semibold">{product.price}</p>
             <button className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
               Add to Cart
             </button>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

@@ -1,9 +1,12 @@
 import { useState } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { showSuccess, showError } = useToast();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) =>
@@ -12,11 +15,14 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       let res = await api.post("/user/login", formData);
-      alert(res?.data?.message || "Login successful");
+      showSuccess(res?.data?.message || "Login successful");
       navigate("/");
     } catch (error) {
-      alert(error.response?.data?.error || "Login failed");
+      showError(error?.response?.data?.error || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
