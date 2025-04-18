@@ -9,6 +9,8 @@ import Profile from "./pages/Profile";
 import CategoryProducts from "./pages/CategoryProducts";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import { useLogin } from "./context/LoginContext";
+import { Order } from "../../backend/models/Order.model";
+import OrderPage from "./pages/OrderPage";
 
 function App() {
   const { role: userrole } = useLogin();
@@ -23,7 +25,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/category/:id" element={<CategoryProducts />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
         {userrole === "admin" ||
           (userrole === "master admin" && (
             <Route path="/AdminDashboard" element={<AdminDashboard />} />

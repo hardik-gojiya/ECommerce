@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import api, { fetchOneProduct } from "../services/api";
+import api from "../services/api";
 import { useState, useEffect } from "react";
 import Loader from "../components/Loader";
 import { useToast } from "../context/ToastContext";
@@ -14,10 +14,23 @@ export default function ProductDetails() {
   const addtoCartHandle = async (id) => {
     try {
       setLoading(true);
-      let res = await api.post(`/cart/addToCart`, { productid: id, quantity: 1 });
+      let res = await api.post(`/cart/addToCart`, {
+        productid: id,
+        quantity: 1,
+      });
       showSuccess(res.data.message);
     } catch (error) {
       showError(error?.response?.data?.error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchOneProduct = async () => {
+    try {
+      const res = await api.get(`/products/getProductById/${id}`);
+      setProduct(res.data.product || []);
+    } catch (error) {
+      console.error("Error fetching product:", error);
     } finally {
       setLoading(false);
     }
@@ -27,7 +40,7 @@ export default function ProductDetails() {
   };
 
   useEffect(() => {
-    fetchOneProduct({ id, setProduct, setLoading });
+    fetchOneProduct();
   }, [id]);
 
   if (!product) {

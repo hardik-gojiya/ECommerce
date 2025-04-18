@@ -1,26 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 export default function Home() {
   const [categories, setCategories] = useState([]);
   const [dummyProducts, setDummyProducts] = useState([]);
+  const { showError } = useToast();
 
+  const fetchHomeProducts = async () => {
+    try {
+      let res = await api.get("/products/getAllProducts");
+      setDummyProducts(res?.data.products || []);
+    } catch (error) {
+      showError(error?.response?.data?.error || "error to fetch categories");
+    }
+  };
   const fetchCategories = async () => {
     try {
       const res = await api.get("/category/getCategories");
       setCategories(res.data.catagories);
     } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
-  const fetchHomeProducts = async () => {
-    try {
-      let res = await api.get("/products/getAllProducts");
-      setDummyProducts(res.data.products || []);
-    } catch (error) {
-      alert(error?.res.error);
+      showError("Error fetching categories:", error);
     }
   };
 
@@ -32,39 +33,38 @@ export default function Home() {
   return (
     <div className="p-4 max-w-7xl mx-auto">
       {/* Hero Section */}
-      <div className="bg-blue-50 rounded-xl p-6 text-center shadow-sm mb-10">
-        <h1 className="text-3xl font-bold mb-2 text-blue-700">
+      <div className="bg-blue-50 rounded-xl p-8 text-center shadow-md mb-12">
+        <h1 className="text-4xl font-extrabold mb-2 text-blue-700">
           Welcome to E-Commerce Store
         </h1>
-        <p className="text-gray-600 mb-4">
-          Shop the latest trends at the best prices!
+        <p className="text-gray-600 mb-6">
+          Shop the latest trends at unbeatable prices!
         </p>
         <Link
           to="/products"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
         >
           Browse Products
         </Link>
       </div>
 
-      {/* Categories */}
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">
+      {/* Categories Section */}
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
         Shop by Category
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-12">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
         {categories &&
           categories.map((category) => (
             <Link
               to={`/category/${category._id}`}
               key={category._id}
-              className="group block bg-white rounded-lg shadow-md hover:shadow-lg transition"
+              className="group block bg-white rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:scale-105"
             >
-              <div className="p-3 text-center">
-                {/* Font Awesome Icon */}
+              <div className="p-6 text-center">
                 <i
-                  className={`fas fa-${category.icon} text-4xl text-blue-600 group-hover:text-blue-700 transition`}
+                  className={`fas fa-${category.icon} text-5xl text-blue-600 group-hover:text-blue-700 transition`}
                 ></i>
-                <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition mt-2">
+                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition mt-3">
                   {category.name}
                 </h3>
               </div>
@@ -72,31 +72,34 @@ export default function Home() {
           ))}
       </div>
 
-      {/* Featured Products */}
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">
+      {/* Featured Products Section */}
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
         Featured Products
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {dummyProducts.map((product) => (
-          <Link
-            to={`/product/${product._id}`}
-            key={product._id}
-            className="border rounded-lg p-4 shadow hover:shadow-md transition bg-white"
-          >
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-40 object-cover mb-4 rounded"
-            />
-            <h3 className="text-lg font-medium text-gray-800">
-              {product.name}
-            </h3>
-            <p className="text-blue-600 font-semibold">{product.price}</p>
-            <button className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-              Add to Cart
-            </button>
-          </Link>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {dummyProducts
+          .slice()
+          .reverse()
+          .map((product) => (
+            <Link
+              to={`/product/${product._id}`}
+              key={product._id}
+              className="border rounded-lg p-6 shadow hover:shadow-lg transition bg-white"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-48 object-cover mb-6 rounded-lg"
+              />
+              <h3 className="text-lg font-semibold text-gray-800">
+                {product.name}
+              </h3>
+              <p className="text-blue-600 font-semibold">{product.price}</p>
+              <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300">
+                Add to Cart
+              </button>
+            </Link>
+          ))}
       </div>
     </div>
   );

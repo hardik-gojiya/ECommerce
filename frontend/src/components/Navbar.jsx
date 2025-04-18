@@ -7,45 +7,44 @@ export default function Navbar() {
   const { islogedin, handlelogOut } = useLogin();
 
   return (
-    <nav
-      className="bg-white sticky top-0
-     dark:bg-gray-900 shadow-md p-4"
+    <nav className="bg-white sticky top-0 shadow-md p-4 z-50">
+  <div className="max-w-7xl mx-auto flex justify-between items-center">
+    <Link
+      to="/"
+      className="text-2xl font-bold text-blue-600 tracking-tight hover:opacity-90 transition"
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link
-          to="/"
-          className="text-xl font-bold text-blue-600 dark:text-white"
-        >
-          🛍 E-Commerce
-        </Link>
+      🛍 E-Commerce
+    </Link>
 
-        <div className="flex items-center space-x-4">
+    <div className="flex items-center gap-6">
+      <Link
+        to="/"
+        className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
+      >
+        Home
+      </Link>
+
+      {islogedin ? (
+        <ProfileMenu />
+      ) : (
+        <div className="flex items-center gap-4">
           <Link
-            to="/"
-            className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-white transition"
+            to="/login"
+            className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
           >
-            Home
+            Login
           </Link>
-          {islogedin ? (
-            <ProfileMenu />
-          ) : (
-            <div>
-              <Link
-                to="/login"
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-white transition"
-              >
-                Login
-              </Link>
-              <Link
-                to="/register"
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-white transition"
-              >
-                Register
-              </Link>
-            </div>
-          )}
+          <Link
+            to="/register"
+            className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
+          >
+            Register
+          </Link>
         </div>
-      </div>
-    </nav>
+      )}
+    </div>
+  </div>
+</nav>
+
   );
 }

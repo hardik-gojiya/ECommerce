@@ -52,7 +52,7 @@ const getCart = async (req, res) => {
     if (!cart) {
       return res.status(404).json({ cart: [] });
     }
-    return res.status(200).json({ cart:cart });
+    return res.status(200).json({ cart: cart });
   } catch (error) {
     return res.status(500).json({ error: "internal server error" });
   }
@@ -60,7 +60,7 @@ const getCart = async (req, res) => {
 
 const removeItemFromCart = async (req, res) => {
   const user = req.user;
-  const { productid } = req.body;
+  const productid = req.params.id;
   if (!productid) {
     return res.status(400).json({ error: "productid require" });
   }
@@ -68,9 +68,9 @@ const removeItemFromCart = async (req, res) => {
   try {
     let userCart = await Cart.findOne({ user: user });
 
-    let findProduct = userCart.items.find(
-      (i) => i.product.toString() === productid
-    );
+    let findProduct = userCart.items.find((i) => {
+      return i.product.toString() === productid;
+    });
 
     if (!findProduct) {
       return res.status(404).json({ error: "product not found" });

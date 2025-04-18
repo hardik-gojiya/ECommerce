@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { FaBars, FaUserCog, FaBox, FaClipboardList, FaPlusCircle } from "react-icons/fa";
+import {
+  FaBars,
+  FaUserCog,
+  FaBox,
+  FaClipboardList,
+  FaPlusCircle,
+} from "react-icons/fa";
+import { ImCross } from "react-icons/im";
 import AddProduct from "./AddProduct";
 import DeleteProduct from "./DeleteProduct";
 import AddCategory from "./AddCategory";
@@ -19,22 +26,25 @@ function AdminDashboard() {
       {/* Mobile Nav Toggle */}
       <div className="bg-blue-900 text-white md:hidden p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Admin Dashboard</h1>
-        <button onClick={handleNav} className="text-white z-11 text-2xl">
-          <FaBars />
+        <button onClick={handleNav} className="text-white z-21 text-2xl">
+          {showSidebar ? <ImCross /> : <FaBars />}
         </button>
       </div>
 
-      <div className={`bg-blue-900 w-full md:w-64 text-white p-5 space-y-4 absolute md:relative z-10 transition-transform duration-300 ease-in-out ${
-        showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-      }`}>
-        <ul className="space-y-4">
+      {/* Sidebar */}
+      <div
+        className={`bg-blue-900 w-full md:w-64 text-white p-5 space-y-6 absolute md:relative z-20 transition-transform duration-300 ease-in-out ${
+          showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        <ul className="space-y-6">
           <li>
             <button
               onClick={() => {
                 setActiveSection("addProduct");
                 setShowSidebar(false);
               }}
-              className="flex items-center space-x-2 hover:bg-blue-700 p-2 rounded w-full"
+              className="flex items-center space-x-3 hover:bg-blue-700 p-3 rounded w-full"
             >
               <FaPlusCircle /> <span>Add Product</span>
             </button>
@@ -45,7 +55,7 @@ function AdminDashboard() {
                 setActiveSection("deleteProduct");
                 setShowSidebar(false);
               }}
-              className="flex items-center space-x-2 hover:bg-blue-700 p-2 rounded w-full"
+              className="flex items-center space-x-3 hover:bg-blue-700 p-3 rounded w-full"
             >
               <FaBox /> <span>Delete Product</span>
             </button>
@@ -56,7 +66,7 @@ function AdminDashboard() {
                 setActiveSection("addCategory");
                 setShowSidebar(false);
               }}
-              className="flex items-center space-x-2 hover:bg-blue-700 p-2 rounded w-full"
+              className="flex items-center space-x-3 hover:bg-blue-700 p-3 rounded w-full"
             >
               <FaClipboardList /> <span>Add Category</span>
             </button>
@@ -68,7 +78,7 @@ function AdminDashboard() {
                   setActiveSection("addAdmin");
                   setShowSidebar(false);
                 }}
-                className="flex items-center space-x-2 hover:bg-blue-700 p-2 rounded w-full"
+                className="flex items-center space-x-3 hover:bg-blue-700 p-3 rounded w-full"
               >
                 <FaUserCog /> <span>Add Admin</span>
               </button>
@@ -80,7 +90,7 @@ function AdminDashboard() {
                 setActiveSection("orderTracking");
                 setShowSidebar(false);
               }}
-              className="flex items-center space-x-2 hover:bg-blue-700 p-2 rounded w-full"
+              className="flex items-center space-x-3 hover:bg-blue-700 p-3 rounded w-full"
             >
               <FaClipboardList /> <span>Track Orders</span>
             </button>
@@ -88,6 +98,7 @@ function AdminDashboard() {
         </ul>
       </div>
 
+      {/* Main Content Area */}
       <div className="flex-1 p-6 mt-4 md:mt-0">
         {activeSection === "addProduct" && <AddProduct />}
         {activeSection === "deleteProduct" && <DeleteProduct />}

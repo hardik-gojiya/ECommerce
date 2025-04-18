@@ -32,26 +32,29 @@ const CategoryProducts = () => {
         <p className="text-gray-600 dark:text-gray-300">No products found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <Link
-              to={`/product/${product._id}`}
-              key={product._id}
-              className="border rounded-lg p-4 shadow hover:shadow-md transition bg-white dark:bg-gray-900"
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-40 object-cover mb-4 rounded"
-              />
-              <h3 className="text-lg font-medium text-gray-800 dark:text-white">
-                {product.name}
-              </h3>
-              <p className="text-blue-600 font-semibold">₹{product.price}</p>
-              <button className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-                Add to Cart
-              </button>
-            </Link>
-          ))}
+          {products
+            .slice()
+            .reverse()
+            .map((product) => (
+              <Link
+                to={`/product/${product._id}`}
+                key={product._id}
+                className="border rounded-lg p-4 shadow hover:shadow-md transition bg-white dark:bg-gray-900"
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-40 object-cover mb-4 rounded"
+                />
+                <h3 className="text-lg font-medium text-gray-800 dark:text-white">
+                  {product.name}
+                </h3>
+                <p className="text-blue-600 font-semibold">₹{product.price}</p>
+                <button className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                  Add to Cart
+                </button>
+              </Link>
+            ))}
         </div>
       )}
     </div>
