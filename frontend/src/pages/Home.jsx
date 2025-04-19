@@ -94,7 +94,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold text-gray-800">
                 {product.name}
               </h3>
-              <p className="text-blue-600 font-semibold">{product.price}</p>
+              <p className="text-blue-600 font-semibold">₹ {product.price}</p>
               <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300">
                 Add to Cart
               </button>

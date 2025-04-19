@@ -7,6 +7,7 @@ import {
   cancleOrder,
   getAllOrderforAdmin,
   changeStatusofOrderByAdmin,
+  getOneOrderById,
 } from "../controllers/order.controller.js";
 
 const router = Router();
@@ -20,6 +21,7 @@ router.post(
 router.get("/getAllOrderforAdmin", AuthMiddleware, getAllOrderforAdmin);
 router.get("/getAllOrderOfUser/:id", AuthMiddleware, getAllOrderOfOneUser);
 router.post("/cancleOrder/:id", AuthMiddleware, cancleOrder);
+router.post("/getorderbyid/:id", AuthMiddleware, getOneOrderById);
 router.post(
   "/changeStatusofOrderByAdmin",
   AuthMiddleware,

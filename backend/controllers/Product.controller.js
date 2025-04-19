@@ -71,7 +71,7 @@ const getProductById = async (req, res) => {
   }
 
   try {
-    const product = await Products.findById(id);
+    const product = await Products.findById(id).populate("category");
     if (!product) {
       return res.status(404).json({ error: "product not found" });
     }

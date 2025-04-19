@@ -22,9 +22,9 @@ function AdminDashboard() {
   const handleNav = () => setShowSidebar(!showSidebar);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen ">
       {/* Mobile Nav Toggle */}
-      <div className="bg-blue-900 text-white md:hidden p-4 flex justify-between items-center">
+      <div className="bg-blue-900 text-white md:hidden p-4 flex justify-between items-center sticky top-20">
         <h1 className="text-xl font-bold">Admin Dashboard</h1>
         <button onClick={handleNav} className="text-white z-21 text-2xl">
           {showSidebar ? <ImCross /> : <FaBars />}
@@ -33,7 +33,7 @@ function AdminDashboard() {
 
       {/* Sidebar */}
       <div
-        className={`bg-blue-900 w-full md:w-64 text-white p-5 space-y-6 absolute md:relative z-20 transition-transform duration-300 ease-in-out ${
+        className={`bg-blue-900  w-full md:w-64 text-white p-5 space-y-6 absolute  md:relative z-20 transition-transform duration-300 ease-in-out ${
           showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >

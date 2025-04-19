@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useToast } from "../../context/ToastContext";
 
-function OrderPage({ setShowOrderModal }) {
-    
+function OrderPage({ setShowOrderModal, handlePlaceOrder }) {
+  const { showError, showSuccess } = useToast();
+
   const [shippingInfo, setShippingInfo] = useState({
     street: "",
     city: "",
@@ -10,13 +12,6 @@ function OrderPage({ setShowOrderModal }) {
     country: "",
     paymentType: "COD",
   });
-
-  const handlePlaceOrder = async () => {
-    if (window.confirm("are you sure want to place order?")) {
-      setShowOrderModal(false);
-    }
-    alert("your order has been placed successfully");
-  };
 
   return (
     <div>
@@ -34,6 +29,7 @@ function OrderPage({ setShowOrderModal }) {
                   placeholder={field[0].toUpperCase() + field.slice(1)}
                   className="w-full border p-2 rounded"
                   value={shippingInfo[field]}
+                  required
                   onChange={(e) =>
                     setShippingInfo({
                       ...shippingInfo,
@@ -67,7 +63,20 @@ function OrderPage({ setShowOrderModal }) {
               Cancel
             </button>
             <button
-              onClick={handlePlaceOrder}
+              onClick={() => {
+                if (
+                  !shippingInfo.street &&
+                  !shippingInfo.city &&
+                  !shippingInfo.state &&
+                  !shippingInfo.postalCode &&
+                  !shippingInfo.country
+                ) {
+                  showError("shiping adress is required");
+                  return;
+                } else {
+                  handlePlaceOrder(shippingInfo);
+                }
+              }}
               className="px-4 py-2 bg-blue-600 text-white rounded"
             >
               Place Order

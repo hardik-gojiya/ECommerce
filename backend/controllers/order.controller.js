@@ -86,7 +86,7 @@ const getAllOrderforAdmin = async (req, res) => {
     return res.status(400).json({ error: "only admin can see all orders" });
   }
   try {
-    const orders = await Order.find();
+    const orders = await Order.find().populate("items.product");
     if (!orders) {
       return res.status(404).json({ error: "no order was found" });
     }
@@ -104,7 +104,7 @@ const getAllOrderOfOneUser = async (req, res) => {
     return res.status(400).json({ error: "you can see only your orders" });
   }
 
-  const orders = await Order.find({ user: req.user });
+  const orders = await Order.find({ user: req.user }).populate("items.product");
   if (!orders) {
     return res.status(404).json({ error: "no Order Found" });
   }
@@ -166,6 +166,15 @@ const changeStatusofOrderByAdmin = async (req, res) => {
   }
 };
 
+const getOneOrderById = async (req, res) => {
+  const orderid = req.params;
+
+  let findOrder = await Order.findById(orderid).populate("item.products");
+  if (!findOrder) {
+    return res.status(404).json({ error: "order not found" });
+  }
+};
+
 export {
   createOrderForCart,
   createOrderForOneProduct,
@@ -173,4 +182,5 @@ export {
   cancleOrder,
   getAllOrderforAdmin,
   changeStatusofOrderByAdmin,
+  getOneOrderById,
 };

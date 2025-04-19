@@ -94,8 +94,8 @@ export default function OrderTracking() {
                 <ul className="list-disc list-inside space-y-1">
                   {order.items.map((item, idx) => (
                     <li key={idx}>
-                      {item.product?.name || "Product"} - ₹{item.price} ×{" "}
-                      {item.quantity}
+                      {item.product?.name || "Product"} - ₹{item.product?.price}{" "}
+                      × {item.quantity}
                     </li>
                   ))}
                 </ul>
