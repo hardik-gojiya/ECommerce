@@ -128,7 +128,7 @@ export default function Profile() {
     <>
       <div className="max-w-6xl mx-auto p-6 space-y-12">
         {/* Sticky Section Navigation */}
-        <div className="sticky top-14 z-10 bg-gradient-to-r from-indigo-50 to-purple-100 border-b py-4 flex gap-8 justify-center text-indigo-700 font-bold shadow-md">
+        <div className="sticky top-14 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 py-3 flex gap-6 justify-center text-indigo-700 font-semibold shadow-sm">
           <a
             href="#updateprofile"
             className="hover:underline hover:text-indigo-900 transition"
@@ -151,11 +151,11 @@ export default function Profile() {
 
         {/* Profile Form */}
         <div
-          className="bg-gradient-to-tr from-pink-100 to-yellow-100 rounded-2xl shadow-2xl p-10 scroll-mt-24"
+          className="bg-white rounded-2xl shadow-lg p-6 md:p-10 scroll-mt-24"
           id="updateprofile"
         >
-          <h2 className="text-3xl font-extrabold mb-8 text-center text-purple-800 border-b-2 border-purple-300 pb-2">
-            ✨ Profile Settings
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-700 border-b pb-4 mb-6">
+            Profile Settings
           </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             {["name", "email", "phone"].map((field) => (
@@ -183,10 +183,7 @@ export default function Profile() {
                 className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
               ></textarea>
             </div>
-            <button
-              type="submit"
-              className="w-full py-3 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-lg font-semibold shadow-lg transition-all duration-300"
-            >
+            <button className="w-full mt-4 py-3 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-base font-semibold shadow-md transition-all duration-300">
               Update Profile
             </button>
           </form>
@@ -274,13 +271,12 @@ export default function Profile() {
 
         {/* Orders Section */}
         <div
-          className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 scroll-mt-24 w-full max-w-4xl mx-auto"
+          className="bg-white rounded-2xl shadow-lg p-6 md:p-8 scroll-mt-24"
           id="order"
         >
-          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 border-b pb-4">
-            Your Orders
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 border-b pb-4 mb-6">
+            📦 Your Orders
           </h2>
-
           {orders.length === 0 ? (
             <p className="text-center text-gray-500 text-base">
               You have no orders yet.
