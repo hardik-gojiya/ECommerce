@@ -21,6 +21,7 @@ const uploadOnClodinary = async (localfilepath) => {
     return upload.url;
   } catch (error) {
     console.log(error);
+    fs.unlinkSync(localfilepath)
   }
 };
 

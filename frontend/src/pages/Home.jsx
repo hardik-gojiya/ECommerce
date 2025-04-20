@@ -10,18 +10,19 @@ export default function Home() {
 
   const fetchHomeProducts = async () => {
     try {
-      let res = await api.get("/products/getAllProducts");
+      const res = await api.get("/products/getAllProducts");
       setDummyProducts(res?.data.products || []);
     } catch (error) {
-      showError(error?.response?.data?.error || "error to fetch categories");
+      showError(error?.response?.data?.error || "Error fetching products");
     }
   };
+
   const fetchCategories = async () => {
     try {
       const res = await api.get("/category/getCategories");
       setCategories(res.data.catagories);
     } catch (error) {
-      showError("Error fetching categories:", error);
+      showError("Error fetching categories");
     }
   };
 
@@ -31,76 +32,95 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
-      <div className="bg-blue-50 rounded-xl p-8 text-center shadow-md mb-12">
-        <h1 className="text-4xl font-extrabold mb-2 text-blue-700">
-          Welcome to E-Commerce Store
+      <div className="bg-gradient-to-tr from-purple-500 via-pink-500 to-yellow-400 text-white p-12 rounded-3xl text-center shadow-xl mb-16">
+        <h1 className="text-5xl font-extrabold mb-4 drop-shadow-lg">
+          Discover Your Style
         </h1>
-        <p className="text-gray-600 mb-6">
-          Shop the latest trends at unbeatable prices!
+        <p className="text-xl font-light mb-6">
+          Explore trendy collections and unbeatable prices.
         </p>
         <Link
           to="/products"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
+          className="bg-white text-purple-600 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-gray-100 transition duration-300"
         >
-          Browse Products
+          Shop Now
         </Link>
       </div>
 
-      {/* Categories Section */}
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
-        Shop by Category
-      </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
-        {categories &&
-          categories.map((category) => (
+      {/* Categories */}
+      <section className="mb-20">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-10 relative inline-block before:absolute before:-bottom-2 before:left-1/2 before:-translate-x-1/2 before:w-16 before:h-1 before:bg-purple-600">
+          Shop by Category
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          {categories.map((category) => (
             <Link
               to={`/category/${category._id}`}
               key={category._id}
-              className="group block bg-white rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:scale-105"
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 p-6 text-center"
             >
-              <div className="p-6 text-center">
+              <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
                 <i
-                  className={`fas fa-${category.icon} text-5xl text-blue-600 group-hover:text-blue-700 transition`}
+                  className={`fas fa-${category.icon} text-purple-600 text-2xl`}
                 ></i>
-                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition mt-3">
-                  {category.name}
-                </h3>
               </div>
-            </Link>
-          ))}
-      </div>
-
-      {/* Featured Products Section */}
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
-        Featured Products
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {dummyProducts
-          .slice()
-          .reverse()
-          .map((product) => (
-            <Link
-              to={`/product/${product._id}`}
-              key={product._id}
-              className="border rounded-lg p-6 shadow hover:shadow-lg transition bg-white"
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-48 object-cover mb-6 rounded-lg"
-              />
-              <h3 className="text-lg font-semibold text-gray-800">
-                {product.name}
+              <h3 className="text-md font-semibold text-gray-700">
+                {category.name}
               </h3>
-              <p className="text-blue-600 font-semibold">₹ {product.price}</p>
-              <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300">
-                Add to Cart
-              </button>
             </Link>
           ))}
-      </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section>
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-12 relative inline-block before:absolute before:-bottom-2 before:left-1/2 before:-translate-x-1/2 before:w-20 before:h-1 before:bg-pink-500">
+          Featured Products
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {dummyProducts
+            .slice()
+            .reverse()
+            .map((product) => (
+              <Link
+                to={`/product/${product._id}`}
+                key={product._id}
+                className="relative bg-white rounded-2xl shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden group"
+              >
+                {/* New Badge */}
+                <span className="absolute top-3 left-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10 shadow">
+                  NEW
+                </span>
+
+                {/* Product Image with Hover Zoom */}
+                <div className="overflow-hidden">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+
+                {/* Product Details */}
+                <div className="p-4 flex flex-col justify-between h-48">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 truncate">
+                      {product.name}
+                    </h3>
+                    <p className="text-pink-600 font-bold text-lg mt-1">
+                      ₹ {product.price}
+                    </p>
+                  </div>
+                  <button className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium px-4 py-2 rounded-xl hover:opacity-90 transition">
+                    Add to Cart
+                  </button>
+                </div>
+              </Link>
+            ))}
+        </div>
+      </section>
     </div>
   );
 }

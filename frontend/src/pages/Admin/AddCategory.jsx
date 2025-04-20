@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import api from "../../services/api";
 import Loader from "../../components/Loader";
+import { useToast } from "../../context/ToastContext";
 
 export default function AddCategory() {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
+  const { showError, showSuccess } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
       let res = await api.post("/category/addCategory", { name });
-      alert(res.data.message || "Category added successfully!");
+      showSuccess(res.data.message || "Category added successfully!");
+      setName("");
     } catch (error) {
-      alert(error?.response.data.error || "Error adding category.");
+      showError(error?.response.data.error || "Error adding category.");
     } finally {
       setLoading(false);
     }

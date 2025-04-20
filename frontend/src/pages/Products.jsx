@@ -11,35 +11,39 @@ export default function Products() {
 
   const fetchProducts = async () => {
     try {
-      let res = await api.get("/products/getAllProducts");
+      const res = await api.get("/products/getAllProducts");
       setProducts(res?.data?.products || []);
     } catch (error) {
-      showError(error?.response?.data?.error || "error to fetch products");
-    }
-  };
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const addToCartHandle = async (id) => {
-    try {
-      setLoading(true);
-      let res = await api.post(`/cart/addToCart`, {
-        productid: id,
-        quantity: 1,
-      });
-      showSuccess(res.data.message);
-    } catch (error) {
-      showError(error?.response?.data?.error);
+      showError(error?.response?.data?.error || "Failed to fetch products");
     } finally {
       setLoading(false);
     }
   };
 
+  const addToCartHandle = async (id) => {
+    try {
+      setLoading(true);
+      const res = await api.post("/cart/addToCart", {
+        productid: id,
+        quantity: 1,
+      });
+      showSuccess(res.data.message);
+    } catch (error) {
+      showError(error?.response?.data?.error || "Failed to add to cart");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   return (
     <div className="p-4 max-w-7xl mx-auto">
       {loading && <Loader />}
-      <h1 className="text-2xl font-bold mb-6">All Products</h1>
+      <h1 className="text-3xl font-bold mb-8 text-[#00b894]">All Products</h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products
           .slice()
@@ -47,21 +51,23 @@ export default function Products() {
           .map((product) => (
             <div
               key={product._id}
-              className="border rounded-xl p-4 shadow hover:shadow-md transition"
+              className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
             >
               <Link to={`/product/${product._id}`}>
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-40 object-cover mb-4 rounded"
+                  className="w-full h-44 object-cover mb-3 rounded-md"
                 />
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {product.name}
+                </h3>
+                <p className="text-[#00b894] font-bold mt-1">₹{product.price}</p>
               </Link>
 
-              <h3 className="text-lg font-medium">{product.name}</h3>
-              <p className="text-blue-600 font-semibold">₹{product.price}</p>
               <button
                 onClick={() => addToCartHandle(product._id)}
-                className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                className="mt-3 w-full py-2 text-sm bg-[#00b894] text-white rounded-lg hover:bg-[#019875] transition"
               >
                 Add to Cart
               </button>

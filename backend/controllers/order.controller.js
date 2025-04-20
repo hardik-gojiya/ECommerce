@@ -86,7 +86,9 @@ const getAllOrderforAdmin = async (req, res) => {
     return res.status(400).json({ error: "only admin can see all orders" });
   }
   try {
-    const orders = await Order.find().populate("items.product");
+    const orders = await Order.find()
+      .populate("items.product")
+      .populate("user", "-password");
     if (!orders) {
       return res.status(404).json({ error: "no order was found" });
     }
@@ -105,6 +107,7 @@ const getAllOrderOfOneUser = async (req, res) => {
   }
 
   const orders = await Order.find({ user: req.user }).populate("items.product");
+
   if (!orders) {
     return res.status(404).json({ error: "no Order Found" });
   }
@@ -152,8 +155,15 @@ const changeStatusofOrderByAdmin = async (req, res) => {
     if (!order) {
       return res.status(404).json({ error: "order not found" });
     }
+    if (order.status === "Delivered") {
+      return res.status(400).json({ error: "order is Delivered" });
+    }
     if (order.status === "Cancelled") {
       return res.status(400).json({ error: "order is cancelled" });
+    }
+    if (status === "Delivered") {
+      order.ispaid = true;
+      order.paidAt = new Date();
     }
     order.status = status;
     await order.save();
@@ -167,11 +177,17 @@ const changeStatusofOrderByAdmin = async (req, res) => {
 };
 
 const getOneOrderById = async (req, res) => {
-  const orderid = req.params;
+  const orderid = req.params.id;
 
-  let findOrder = await Order.findById(orderid).populate("item.products");
-  if (!findOrder) {
-    return res.status(404).json({ error: "order not found" });
+  try {
+    let findOrder = await Order.findById(orderid).populate("items.product");
+    if (!findOrder) {
+      return res.status(404).json({ error: "order not found" });
+    }
+    return res.status(200).json({ findOrder });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server Error" });
   }
 };
 

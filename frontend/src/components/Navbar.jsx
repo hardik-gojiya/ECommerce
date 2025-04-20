@@ -7,19 +7,21 @@ export default function Navbar() {
   const { islogedin } = useLogin();
 
   return (
-    <nav className="bg-white sticky top-0 shadow-md p-4 z-50">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+    <nav className="bg-[#fefefe] shadow-md sticky top-0 z-50 border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        {/* Logo */}
         <Link
           to="/"
-          className="text-2xl font-bold text-blue-600 tracking-tight hover:opacity-90 transition"
+          className="text-2xl font-extrabold text-[#00b894] tracking-tight hover:opacity-80 transition"
         >
-          🛍 E-Commerce
+          🛍 E-Shop
         </Link>
 
+        {/* Navigation Links */}
         <div className="flex items-center gap-6">
           <Link
             to="/"
-            className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
+            className="text-sm font-medium text-[#2b2d42] hover:text-[#00b894] transition"
           >
             Home
           </Link>
@@ -27,7 +29,7 @@ export default function Navbar() {
           {/* Cart Icon */}
           <Link
             to="/profile#cart"
-            className="text-gray-700 hover:text-blue-600 transition-colors flex items-center gap-1"
+            className="text-[#2b2d42] hover:text-[#00b894] transition flex items-center gap-1"
             aria-label="cart"
             title="Go to Cart"
           >
@@ -37,16 +39,16 @@ export default function Navbar() {
           {islogedin ? (
             <ProfileMenu />
           ) : (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <Link
                 to="/login"
-                className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
+                className="text-sm font-medium text-[#2b2d42] hover:text-[#00b894] transition"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
+                className="text-sm font-medium text-white bg-[#00b894] px-4 py-1.5 rounded-lg hover:bg-[#019170] transition"
               >
                 Register
               </Link>

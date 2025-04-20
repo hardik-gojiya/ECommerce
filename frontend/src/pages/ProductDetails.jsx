@@ -18,7 +18,7 @@ export default function ProductDetails() {
       setLoading(true);
       const res = await api.post(`/cart/addToCart`, {
         productid: id,
-        quantity: 1,
+        quantity: quantity,
       });
       showSuccess(res.data.message);
     } catch (error) {

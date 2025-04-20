@@ -8,7 +8,7 @@ import { useToast } from "../../context/ToastContext";
 export default function DeleteProduct() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { userId } = useLogin;
+  const { userId } = useLogin();
   const { showSuccess, showError } = useToast();
 
   useEffect(() => {
@@ -68,14 +68,13 @@ export default function DeleteProduct() {
 
               <h3 className="text-lg font-medium">{product.name}</h3>
               <p className="text-blue-600 font-semibold">{product.price}</p>
-              {product.user === userId && (
-                <button
-                  onClick={() => handleDelete(product._id)}
-                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                >
-                  Delete Product
-                </button>
-              )}
+
+              <button
+                onClick={() => handleDelete(product._id)}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+              >
+                Delete Product
+              </button>
             </div>
           ))}
       </div>

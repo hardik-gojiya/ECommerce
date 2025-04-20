@@ -20,9 +20,9 @@ router.post(
 );
 router.get("/getAllOrderforAdmin", AuthMiddleware, getAllOrderforAdmin);
 router.get("/getAllOrderOfUser/:id", AuthMiddleware, getAllOrderOfOneUser);
-router.post("/cancleOrder/:id", AuthMiddleware, cancleOrder);
-router.post("/getorderbyid/:id", AuthMiddleware, getOneOrderById);
-router.post(
+router.delete("/cancleOrder/:id", AuthMiddleware, cancleOrder);
+router.get("/getorderbyid/:id", AuthMiddleware, getOneOrderById);
+router.put(
   "/changeStatusofOrderByAdmin",
   AuthMiddleware,
   changeStatusofOrderByAdmin

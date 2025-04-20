@@ -13,6 +13,7 @@ import AddCategory from "./AddCategory";
 import AddAdmin from "./AddAdmin";
 import OrderTracking from "./OrderTracking";
 import { useLogin } from "../../context/LoginContext";
+import { useToast } from "../../context/ToastContext";
 
 function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("addProduct");
@@ -99,7 +100,7 @@ function AdminDashboard() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-6 mt-4 md:mt-0">
+      <div className="flex-1 p-6 mt-4 h-[700px] overflow-y-scroll">
         {activeSection === "addProduct" && <AddProduct />}
         {activeSection === "deleteProduct" && <DeleteProduct />}
         {activeSection === "addCategory" && <AddCategory />}
