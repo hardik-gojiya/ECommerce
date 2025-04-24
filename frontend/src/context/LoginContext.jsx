@@ -69,13 +69,13 @@ export const LoginProvider = ({ children }) => {
 
   useEffect(() => {
     checkLoggedin();
-  }, []);
+  }, [islogedin]);
 
   return (
     <LoginContext.Provider
       value={{
         islogedin,
-        userId,
+        userId, 
         role,
         email,
         name,

@@ -157,7 +157,9 @@ function OrderDetailsPage() {
           {new Date(order.createdAt).toLocaleString()}
         </p>
       </div>
-      {(order.status === "Processing" || order.status === "Shipped") && (
+      {(order.status === "Processing" ||
+        order.status === "Placed" ||
+        order.status === "Shipped") && (
         <button
           onClick={() => cancleOrder()}
           className="text-sm px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"

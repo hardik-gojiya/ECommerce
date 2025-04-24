@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App.jsx";
 import { LoginProvider } from "./context/LoginContext.jsx";
 import { ToastProvider } from "./context/ToastContext.jsx";
+import { CartProvider } from "./context/CartContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ToastProvider>
       <LoginProvider>
-        <App />
+        <CartProvider>
+          <App />
+        </CartProvider>
       </LoginProvider>
     </ToastProvider>
   </StrictMode>

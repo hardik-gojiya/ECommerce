@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 import { useToast } from "../context/ToastContext";
+import { useCart } from "../context/CartContext";
 
 export default function Home() {
   const [categories, setCategories] = useState([]);
   const [dummyProducts, setDummyProducts] = useState([]);
   const { showError } = useToast();
+  const { addtoCartHandle } = useCart();
 
   const fetchHomeProducts = async () => {
     try {
@@ -113,7 +115,10 @@ export default function Home() {
                       ₹ {product.price}
                     </p>
                   </div>
-                  <button className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium px-4 py-2 rounded-xl hover:opacity-90 transition">
+                  <button
+                    onClick={(e) => addtoCartHandle(e, product._id, 1)}
+                    className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium px-4 py-2 rounded-xl hover:opacity-90 transition"
+                  >
                     Add to Cart
                   </button>
                 </div>

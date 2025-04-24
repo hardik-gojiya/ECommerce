@@ -108,9 +108,25 @@ const decreseQunatityOfProductbyOne = async (req, res) => {
   return res.status(200).json({ message: "qunatity decrese by 1", usercart });
 };
 
+const emptyCart = async (req, res) => {
+  const user = req.params.userId;
+  try {
+    let cart = await Cart.findOne({ user: user });
+    if (!cart) {
+      return res.status(404).json({ error: "cart not found" });
+    }
+    cart.items = [];
+    await cart.save();
+    return res.status(200).json({ message: "cart emptied successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
 export {
   addToCart,
   getCart,
   removeItemFromCart,
   decreseQunatityOfProductbyOne,
+  emptyCart,
 };

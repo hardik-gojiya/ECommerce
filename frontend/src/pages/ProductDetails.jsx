@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Loader from "../components/Loader";
 import { useToast } from "../context/ToastContext";
 import OrderPage from "./Orders/OrderPage";
+import { useCart } from "../context/CartContext";
 
 export default function ProductDetails() {
   const { showSuccess, showError } = useToast();
@@ -12,21 +13,22 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [showOrderModal, setShowOrderModal] = useState(false);
+  const { addtoCartHandle } = useCart();
 
-  const addtoCartHandle = async (id) => {
-    try {
-      setLoading(true);
-      const res = await api.post(`/cart/addToCart`, {
-        productid: id,
-        quantity: quantity,
-      });
-      showSuccess(res.data.message);
-    } catch (error) {
-      showError(error?.response?.data?.error || "Failed to add to cart");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const addtoCartHandle = async (id) => {
+  //   try {
+  //     setLoading(true);
+  //     const res = await api.post(`/cart/addToCart`, {
+  //       productid: id,
+  //       quantity: quantity,
+  //     });
+  //     showSuccess(res.data.message);
+  //   } catch (error) {
+  //     showError(error?.response?.data?.error || "Failed to add to cart");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const fetchOneProduct = async () => {
     try {
@@ -42,6 +44,7 @@ export default function ProductDetails() {
   const buyProductHandle = async (id) => {
     setShowOrderModal(true);
   };
+
   const handlePlaceOneProductOrder = async (shippingInfo) => {
     if (window.confirm("are you sure you want to place this order")) {
       try {
@@ -134,7 +137,7 @@ export default function ProductDetails() {
           <div className="flex gap-4">
             <button
               disabled={loading}
-              onClick={() => addtoCartHandle(product._id)}
+              onClick={(e) => addtoCartHandle(e, product._id, quantity)}
               className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition font-semibold disabled:opacity-50"
             >
               Add to Cart

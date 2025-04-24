@@ -2,16 +2,34 @@ import { useEffect, useState } from "react";
 import { useLogin } from "../context/LoginContext";
 import { useToast } from "../context/ToastContext";
 import api from "../services/api";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import OrderPage from "./Orders/OrderPage";
+import { useCart } from "../context/CartContext";
 
 export default function Profile() {
   const [loading, setLoading] = useState(false);
   const { userId, name, email, phone, address } = useLogin();
   const { showSuccess, showError } = useToast();
-  const [cartItems, setCartItems] = useState([]);
+  const {
+    cartItems,
+    increaseQuantity,
+    decreaseQuantity,
+    removeItem,
+    getCartTotal,
+    emptyCart,
+  } = useCart();
   const [orders, setOrders] = useState([]);
   const [showOrderModal, setShowOrderModal] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
 
   const [user, setUser] = useState({
     name: "",
@@ -24,17 +42,17 @@ export default function Profile() {
     setUser({ name, email, phone, address });
   }, [name, email, phone, address]);
 
-  const fetchUserCart = async () => {
-    try {
-      const res = await api.get(`/cart/getCart/${userId}`);
-      if (!res) {
-        return;
-      }
-      setCartItems(res.data.cart.items || []);
-    } catch (error) {
-      console.log(error?.response?.data?.error || "Failed to fetch cart");
-    }
-  };
+  // const fetchUserCart = async () => {
+  //   try {
+  //     const res = await api.get(`/cart/getCart/${userId}`);
+  //     if (!res) {
+  //       return;
+  //     }
+  //     setCartItems(res.data.cart.items || []);
+  //   } catch (error) {
+  //     console.log(error?.response?.data?.error || "Failed to fetch cart");
+  //   }
+  // };
 
   const fetchAllOrderOfUser = async () => {
     try {
@@ -62,47 +80,9 @@ export default function Profile() {
     }
   };
 
-  const increaseQuantity = async (id) => {
-    try {
-      let res = await api.post(`/cart/addToCart`, {
-        productid: id,
-        quantity: 1,
-      });
-      fetchUserCart();
-    } catch (error) {
-      showError(error?.response?.data?.error || "error to increase quantity");
-    }
-  };
-
-  const decreaseQuantity = async (id) => {
-    try {
-      let res = await api.delete(`/cart/decreseQunatityOfProductbyOne/${id}`);
-      // showSuccess(res.data.message || "decreasse successfully");
-      fetchUserCart();
-    } catch (error) {
-      showError(error?.response?.data?.error || "error to decreasse quantity");
-    }
-  };
-
-  const removeItem = async (productid) => {
-    try {
-      let res = await api.delete(`/cart/removeItemFromCart/${productid}`);
-      showSuccess(res.data.message);
-      fetchUserCart();
-    } catch (error) {
-      showError(error?.response?.data?.error || "error to remove item");
-    }
-  };
-
-  const getCartTotal = () =>
-    cartItems.reduce(
-      (total, item) => total + item.product.price * item.quantity,
-      0
-    );
-
   useEffect(() => {
     if (userId) {
-      fetchUserCart(), fetchAllOrderOfUser();
+      fetchAllOrderOfUser();
     }
   }, [userId]);
 
@@ -118,6 +98,7 @@ export default function Profile() {
         });
         showSuccess(res?.data.message);
         setShowOrderModal(false);
+        fetchAllOrderOfUser();
       } catch (error) {
         showError(error?.response?.data.error || "error to place your order");
       }
@@ -187,18 +168,37 @@ export default function Profile() {
               Update Profile
             </button>
           </form>
+          <Link to="/updatepassword" className="mt-4">
+            update password
+          </Link>
         </div>
 
         {/* Cart Section */}
+        {/* Cart Section */}
         <div
-          className="bg-gradient-to-br from-indigo-50 via-pink-50 to-yellow-100 rounded-2xl shadow-xl p-10 scroll-mt-24"
           id="cart"
+          aria-label="cart"
+          className="bg-gradient-to-br from-indigo-50 via-pink-50 to-yellow-100 rounded-2xl shadow-xl p-6 md:p-10 scroll-mt-24"
         >
           <h2 className="text-3xl font-extrabold mb-8 text-center text-indigo-700 border-b-2 border-indigo-200 pb-2">
             🛒 Your Cart
           </h2>
+
+          {cartItems.length > 0 && (
+            <div className="text-right mb-4">
+              <button
+                onClick={() => emptyCart()}
+                className="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg font-semibold transition"
+              >
+                Remove All Items
+              </button>
+            </div>
+          )}
+
           {cartItems.length === 0 ? (
-            <p className="text-center text-gray-600">Your cart is empty.</p>
+            <p className="text-center text-gray-600 italic">
+              Your cart is empty.
+            </p>
           ) : (
             <div className="space-y-6">
               {cartItems
@@ -219,7 +219,7 @@ export default function Profile() {
                       <h4 className="text-lg font-bold text-indigo-800">
                         {item.product.name}
                       </h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 mt-1">
                         ₹{item.product.price} × {item.quantity}
                       </p>
                       <div className="flex space-x-3 mt-3">
@@ -246,7 +246,7 @@ export default function Profile() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-md font-semibold text-indigo-600 whitespace-nowrap">
+                    <p className="text-md font-semibold text-indigo-600 whitespace-nowrap mt-2 md:mt-0">
                       ₹{item.product.price * item.quantity}
                     </p>
                   </div>
@@ -256,6 +256,7 @@ export default function Profile() {
               </div>
             </div>
           )}
+
           {cartItems.length > 0 && (
             <div className="text-right mt-6">
               <button
@@ -277,6 +278,7 @@ export default function Profile() {
           <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 border-b pb-4 mb-6">
             📦 Your Orders
           </h2>
+          <Link to="/all-orders-of-user">See Your All Orders</Link>
           {orders.length === 0 ? (
             <p className="text-center text-gray-500 text-base">
               You have no orders yet.
@@ -286,6 +288,7 @@ export default function Profile() {
               {orders
                 .slice()
                 .reverse()
+                .slice(0, 3)
                 .map((order) => (
                   <Link
                     to={`/orderdetail/${order._id}`}

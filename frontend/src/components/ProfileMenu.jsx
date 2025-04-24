@@ -25,6 +25,10 @@ const ProfileMenu = () => {
     await handlelogOut();
     navigate("/login");
   };
+  const handleOrders = () => {
+    navigate("/all-orders-of-user");
+    setOpen(false);
+  };
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -62,11 +66,18 @@ const ProfileMenu = () => {
             Profile
           </button>
           <button
+            onClick={handleOrders}
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+          >
+            Your Orders
+          </button>
+          <button
             onClick={handleLogout}
             className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 transition"
           >
             Logout
           </button>
+
           {(userrole === "admin" || userrole === "master admin") && (
             <Link
               to="/admin"

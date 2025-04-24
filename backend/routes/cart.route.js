@@ -4,6 +4,7 @@ import {
   getCart,
   removeItemFromCart,
   decreseQunatityOfProductbyOne,
+  emptyCart,
 } from "../controllers/Cart.controller.js";
 import { AuthMiddleware } from "../middlewares/auth.middleware.js";
 
@@ -17,5 +18,6 @@ router.delete(
   AuthMiddleware,
   decreseQunatityOfProductbyOne
 );
+router.delete("/emptyCart/:userId", AuthMiddleware, emptyCart);
 
 export default router;

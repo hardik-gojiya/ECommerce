@@ -1,10 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLogin } from "../context/LoginContext";
 import ProfileMenu from "./ProfileMenu";
 import { FaShoppingCart } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const { islogedin } = useLogin();
+  const navigate = useNavigate();
+  const { getCartItemsCount } = useCart();
 
   return (
     <nav className="bg-[#fefefe] shadow-md sticky top-0 z-50 border-b border-gray-200">
@@ -27,14 +30,23 @@ export default function Navbar() {
           </Link>
 
           {/* Cart Icon */}
-          <Link
-            to="/profile#cart"
-            className="text-[#2b2d42] hover:text-[#00b894] transition flex items-center gap-1"
-            aria-label="cart"
-            title="Go to Cart"
-          >
-            <FaShoppingCart className="w-5 h-5" />
-          </Link>
+          <div className="relative">
+            <button
+              onClick={() => {
+                navigate("/profile#cart");
+              }}
+              className="text-[#2b2d42] hover:text-[#00b894] transition"
+              aria-label="cart"
+              title="Go to Cart"
+            >
+              <FaShoppingCart className="w-5 h-5" />
+              {getCartItemsCount() > 0 && (
+                <span className="absolute -top-2 -right-2 bg-transparent backdrop-blur-2xl rounded-full px-1.5 py-0.5 text-xs font-semibold shadow-md">
+                  {getCartItemsCount()}
+                </span>
+              )}
+            </button>
+          </div>
 
           {islogedin ? (
             <ProfileMenu />

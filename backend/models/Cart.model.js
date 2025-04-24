@@ -23,6 +23,10 @@ const cartSchema = new mongoose.Schema(
         },
       },
     ],
+    totalitem: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
