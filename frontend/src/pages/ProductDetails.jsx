@@ -14,6 +14,7 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const { addtoCartHandle } = useCart();
+  const [currIndImg, setCurrIndImg] = useState(0);
 
   // const addtoCartHandle = async (id) => {
   //   try {
@@ -67,6 +68,12 @@ export default function ProductDetails() {
     fetchOneProduct();
   }, [id]);
 
+  const changeImage = () => {
+    currIndImg === product.image.length - 1
+      ? setCurrIndImg(0)
+      : setCurrIndImg(currIndImg + 1);
+  };
+
   if (loading) return <Loader />;
 
   if (!product) {
@@ -78,79 +85,112 @@ export default function ProductDetails() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex flex-col md:flex-row gap-10 items-start">
-        <div className="w-full md:w-1/2">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-auto object-cover rounded-xl shadow-md"
-          />
+    <div className="p-4 md:p-8 max-w-6xl mx-auto">
+      <div className="flex flex-col md:flex-row gap-8 md:gap-12">
+        {/* Image Section */}
+        <div className="w-full md:w-1/2 flex flex-col items-center gap-4">
+          <div className="w-full overflow-hidden rounded-2xl shadow-lg">
+            <img
+              src={product.image[currIndImg]}
+              alt={product.name}
+              className="w-full h-[300px] md:h-[400px] object-contain transition-all duration-300"
+            />
+          </div>
+          {product.image.length > 1 && (
+            <button
+              onClick={changeImage}
+              className="px-4 py-1 rounded-md bg-gray-200 hover:bg-gray-300 transition"
+            >
+              Next Image &rarr;
+            </button>
+          )}
         </div>
 
+        {/* Info Section */}
         <div className="w-full md:w-1/2 space-y-6">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
               {product.name}
             </h1>
-            <div className="space-y-1 mb-2">
-              <p className="text-2xl font-semibold text-blue-600">
-                ₹{product.price}{" "}
-                <span className="text-sm text-gray-600">per item</span>
-              </p>
-            </div>
-            <p className="text-gray-700 leading-relaxed">
-              {product.description}
+            <p className="text-lg md:text-2xl mt-1">
+              {product.discount > 0 ? (
+                <>
+                  <span className="text-red-600 font-bold mr-2">
+                    ₹{product.finalPrice}
+                  </span>
+                  <span className="line-through text-gray-500 text-base">
+                    ₹{product.price}
+                  </span>
+                  <span className="ml-2 text-green-600 text-sm font-medium">
+                    ({product.discount}% OFF)
+                  </span>
+                </>
+              ) : (
+                <span className="text-blue-600 font-semibold">
+                  ₹{product.price}
+                </span>
+              )}
+              <span className="text-sm text-gray-500 font-normal"> / item</span>
             </p>
-            <p className="text-sm text-gray-600 mt-3">
+            <p className="text-gray-700 mt-4">{product.description}</p>
+            <p className="text-sm text-gray-500 mt-3">
               Category:{" "}
-              <span className="font-medium text-gray-800">
+              <span className="text-gray-800 font-medium">
                 {product.category?.name || "Unknown"}
               </span>
             </p>
           </div>
-          <div className="flex space-x-3 mt-3">
+
+          {/* Quantity Controls */}
+          <div className="flex items-center gap-4">
             <button
               disabled={quantity === 1}
               onClick={() => setQuantity(quantity - 1)}
-              className="text-sm px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition disabled:opacity-50"
+              className="px-3 py-1 rounded-md bg-yellow-400 text-white hover:bg-yellow-500 transition disabled:opacity-50"
             >
               -
             </button>
-            <span className="font-medium text-gray-800">{quantity}</span>
+            <span className="text-lg font-medium text-gray-800">
+              {quantity}
+            </span>
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="text-sm px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+              className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600 transition"
             >
               +
             </button>
-            {quantity > 1 && (
-              <p className="text-lg font-medium text-gray-800">
-                Total:{" "}
-                <span className="text-green-600 font-bold">
-                  ₹{product.price * quantity}
-                </span>
-              </p>
-            )}
           </div>
 
-          <div className="flex gap-4">
+          {/* Total if > 1 */}
+          {quantity > 1 && (
+            <p className="text-base font-medium text-gray-800">
+              Total:{" "}
+              <span className="text-green-600 font-bold">
+                ₹{product.price * quantity}
+              </span>
+            </p>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-4 mt-4">
             <button
               disabled={loading}
               onClick={(e) => addtoCartHandle(e, product._id, quantity)}
-              className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition font-semibold disabled:opacity-50"
+              className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium transition disabled:opacity-50"
             >
               Add to Cart
             </button>
             <button
               onClick={() => buyProductHandle(product._id)}
-              className="px-6 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition font-semibold"
+              className="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 font-medium transition"
             >
               Buy Now
             </button>
           </div>
         </div>
       </div>
+
+      {/* Modal */}
       {showOrderModal && (
         <OrderPage
           setShowOrderModal={setShowOrderModal}

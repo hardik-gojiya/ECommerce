@@ -99,7 +99,7 @@ export default function Home() {
                 {/* Product Image with Hover Zoom */}
                 <div className="overflow-hidden">
                   <img
-                    src={product.image}
+                    src={product.image[0]}
                     alt={product.name}
                     className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                   />

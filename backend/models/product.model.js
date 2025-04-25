@@ -15,17 +15,32 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    finalPrice: {
+      type: Number,
+    },
     image: {
-      type: String,
+      type: [String],
+      default: [],
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
+    brand: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
+productSchema.pre("save", function (next) {
+  this.finalPrice = this.price - (this.price * this.discount) / 100;
+  next();
+});
 
 productSchema.post("findOneAndDelete", async function (doc) {
   if (doc) {

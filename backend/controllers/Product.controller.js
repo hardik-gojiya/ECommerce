@@ -6,10 +6,10 @@ import {
 } from "../utils/Cloudinary.util.js";
 
 const addProduct = async (req, res) => {
-  const { name, description, price, category } = req.body;
-  const localfilepath = req.file?.path;
+  const { name, description, price, discount, category } = req.body;
+  const localfiles = req.files;
 
-  if (!name || !description || !price || !category || !localfilepath) {
+  if (!name || !description || !price || !category || !req.files) {
     return res.status(400).json({ error: "all fields are require" });
   }
 
@@ -27,16 +27,21 @@ const addProduct = async (req, res) => {
       });
       await findcategory.save();
     }
-    const cloudinaryurl = await uploadOnClodinary(localfilepath);
-    if (!cloudinaryurl) {
-      return res.status(400).json({ error: "errro while uploading image" });
+    let uploadedImages = [];
+    for (const file of localfiles) {
+      const cloudinaryurl = await uploadOnClodinary(file.path);
+      if (!cloudinaryurl) {
+        return res.status(400).json({ error: "errro while uploading image" });
+      }
+      uploadedImages.push(cloudinaryurl);
     }
 
     const product = new Products({
       name,
       description,
       price,
-      image: cloudinaryurl,
+      discount,
+      image: uploadedImages,
       category: findcategory,
     });
     if (!product) {

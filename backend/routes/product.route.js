@@ -12,7 +12,12 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.post("/addProduct", upload.single("image"), AuthMiddleware, addProduct);
+router.post(
+  "/addProduct",
+  upload.array("image", 5),
+  AuthMiddleware,
+  addProduct
+);
 router.get("/getAllProducts", fetchAllProducts);
 router.get("/getProductById/:id", AuthMiddleware, getProductById);
 router.put(

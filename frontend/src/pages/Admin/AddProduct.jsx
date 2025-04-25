@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import api from "../../services/api";
 import Loader from "../../components/Loader";
 
@@ -7,10 +7,12 @@ export default function AddProduct() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [discount, setDiscount] = useState(0);
   const [category, setCategory] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState([]);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [categoryForD, setCategoryForD] = useState(null);
+  const fileInputRef = useRef();
 
   const fetchCategories = async () => {
     try {
@@ -25,12 +27,27 @@ export default function AddProduct() {
     fetchCategories();
   }, []);
 
+  const handleClickDropZone = () => {
+    fileInputRef.current.click(); // open file explorer
+  };
+
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
+    const files = Array.from(e.target.files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    setImage((prev) => [...prev, ...files]);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    setImage((prev) => [...prev, ...files]);
+  };
+
+  const handleRemoveImage = (index) => {
+    setImage((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -40,8 +57,11 @@ export default function AddProduct() {
     formData.append("name", name);
     formData.append("description", description);
     formData.append("price", price);
+    formData.append("discount", discount);
     formData.append("category", category);
-    formData.append("image", image);
+    for (let i = 0; i < image.length; i++) {
+      formData.append("image", image[i]);
+    }
 
     try {
       setLoading(true);
@@ -99,6 +119,23 @@ export default function AddProduct() {
           required
           min="0"
         />
+        <input
+          type="number"
+          placeholder="discount"
+          value={discount}
+          onChange={(e) => setDiscount(e.target.value)}
+          className="w-full p-3 border rounded"
+          required
+        />
+        {/* <input
+          type="text"
+          placeholder="Brand"
+          // value={price}
+          // onChange={(e) => setPrice(e.target.value)}
+          className="w-full p-3 border rounded"
+          required
+          min="0"
+        /> */}
 
         <div className="space-y-2">
           <label className="block font-semibold">Choose Category</label>
@@ -126,21 +163,47 @@ export default function AddProduct() {
           />
         </div>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="w-full p-3 border rounded"
-          required
-        />
+        <div
+          onClick={handleClickDropZone}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop}
+          className="border-dashed border-4 border-gray-400 rounded-lg p-6 text-center mb-4 cursor-pointer hover:bg-gray-100"
+        >
+          <p className="text-gray-600">Click or drag and drop images here</p>
 
-        {previewUrl && (
-          <img
-            src={previewUrl}
-            alt="Preview"
-            className="mt-4 w-40 h-40 object-cover rounded"
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
           />
-        )}
+
+          {image?.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              {image?.map((img, idx) => (
+                <div key={idx} className="relative group">
+                  <img
+                    src={URL.createObjectURL(img)}
+                    alt="preview"
+                    className="w-full h-32 object-cover rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage(idx);
+                    }}
+                    className="absolute  top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700"
+                  >
+                    ❌
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <button
           type="submit"

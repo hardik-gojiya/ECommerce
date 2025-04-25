@@ -55,14 +55,16 @@ export default function Products() {
             >
               <Link to={`/product/${product._id}`}>
                 <img
-                  src={product.image}
+                  src={product.image[0]}
                   alt={product.name}
                   className="w-full h-44 object-cover mb-3 rounded-md"
                 />
                 <h3 className="text-lg font-semibold text-gray-800">
                   {product.name}
                 </h3>
-                <p className="text-[#00b894] font-bold mt-1">₹{product.price}</p>
+                <p className="text-[#00b894] font-bold mt-1">
+                  ₹{product.price}
+                </p>
               </Link>
 
               <button
