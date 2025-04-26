@@ -3,10 +3,12 @@ import { useToast } from "../context/ToastContext";
 import { useLogin } from "../context/LoginContext";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { useLoading } from "../context/LoadingContext";
 
 function PasswordChangeCard() {
   const navigate = useNavigate();
   const { showError, showSuccess } = useToast();
+  const { setLoading } = useLoading();
   const { userId } = useLogin();
   const [newpassword, setNewPassword] = useState("");
   const [newconfirmpassword, setNewconfirmPassword] = useState("");
@@ -21,6 +23,7 @@ function PasswordChangeCard() {
     }
 
     try {
+      setLoading(true);
       const res = await api.post(`/user/update-profile-password/${userId}`, {
         oldpassword,
         newpassword,
@@ -32,6 +35,8 @@ function PasswordChangeCard() {
       navigate("/profile");
     } catch (error) {
       showError(error?.response?.data?.error || "Error updating password");
+    } finally {
+      setLoading(false);
     }
   };
 

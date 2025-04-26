@@ -30,26 +30,28 @@ export default function Navbar() {
           </Link>
 
           {/* Cart Icon */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                navigate("/profile#cart");
-              }}
-              className="text-[#2b2d42] hover:text-[#00b894] transition"
-              aria-label="cart"
-              title="Go to Cart"
-            >
-              <FaShoppingCart className="w-5 h-5" />
-              {getCartItemsCount() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-transparent backdrop-blur-2xl rounded-full px-1.5 py-0.5 text-xs font-semibold shadow-md">
-                  {getCartItemsCount()}
-                </span>
-              )}
-            </button>
-          </div>
 
           {islogedin ? (
-            <ProfileMenu />
+            <>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    navigate("/profile#cart");
+                  }}
+                  className="text-[#2b2d42] hover:text-[#00b894] transition"
+                  aria-label="cart"
+                  title="Go to Cart"
+                >
+                  <FaShoppingCart className="w-5 h-5" />
+                  {getCartItemsCount() > 0 && (
+                    <span className="absolute -top-2  -right-2 bg-transparent backdrop-blur-2xl rounded-full px-1.5 py-0.5 text-xs font-semibold shadow-md">
+                      {getCartItemsCount()}
+                    </span>
+                  )}
+                </button>
+              </div>
+              <ProfileMenu />
+            </>
           ) : (
             <div className="flex items-center gap-3">
               <Link

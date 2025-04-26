@@ -1,12 +1,15 @@
 import { useState } from "react";
-import api from "../services/api";
+import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../context/ToastContext";
+import { useToast } from "../../context/ToastContext";
+import { useLogin } from "../../context/LoginContext";
+import { useLoading } from "../../context/LoadingContext";
 
 export default function Login() {
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(false);
+  const { checkLoggedin } = useLogin();
+  const { loading, setLoading } = useLoading();
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) =>
@@ -18,6 +21,7 @@ export default function Login() {
       setLoading(true);
       let res = await api.post("/user/login", formData);
       showSuccess(res?.data?.message || "Login successful");
+      checkLoggedin();
       navigate("/");
     } catch (error) {
       showError(error?.response?.data?.error || "Login failed");

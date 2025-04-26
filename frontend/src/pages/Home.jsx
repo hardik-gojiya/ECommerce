@@ -111,8 +111,28 @@ export default function Home() {
                     <h3 className="text-lg font-semibold text-gray-900 truncate">
                       {product.name}
                     </h3>
-                    <p className="text-pink-600 font-bold text-lg mt-1">
-                      ₹ {product.price}
+                    <p className="text-lg md:text-2xl mt-1">
+                      {product.discount > 0 ? (
+                        <>
+                          <span className="text-blue-500 font-bold mr-2">
+                            ₹{product.finalPrice}
+                          </span>
+                          <span className="line-through text-gray-500 text-base">
+                            ₹{product.price}
+                          </span>
+                          <span className="ml-2 text-green-600 text-sm font-medium">
+                            ({product.discount}% OFF)
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-blue-600 font-semibold">
+                          ₹{product.price}
+                        </span>
+                      )}
+                      <span className="text-sm text-gray-500 font-normal">
+                        {" "}
+                        / item
+                      </span>
                     </p>
                   </div>
                   <button

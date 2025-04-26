@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import api from "../../services/api";
-import Loader from "../../components/Loader";
 import { useToast } from "../../context/ToastContext";
+import { useLoading } from "../../context/LoadingContext";
 
 export default function AddCategory() {
-  const [loading, setLoading] = useState(false);
+  const { setLoading } = useLoading();
   const [name, setName] = useState("");
   const { showError, showSuccess } = useToast();
 
@@ -24,7 +24,6 @@ export default function AddCategory() {
 
   return (
     <div>
-      {loading && <Loader />}
       <h2 className="text-2xl font-bold mb-4">Add Category</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input

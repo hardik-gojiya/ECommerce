@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import api from "../services/api.js";
 import { useToast } from "./ToastContext.jsx";
+import { useNavigate } from "react-router-dom";
+import { useLoading } from "./LoadingContext.jsx";
 
 const LoginContext = createContext();
 
@@ -9,7 +11,9 @@ export const useLogin = () => {
 };
 
 export const LoginProvider = ({ children }) => {
+  const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
+  const { setLoading } = useLoading();
   const [userId, setUserId] = useState("");
   const [islogedin, setIslogedin] = useState(false);
   const [email, setEmail] = useState("");
@@ -58,11 +62,15 @@ export const LoginProvider = ({ children }) => {
   const handlelogOut = async () => {
     if (islogedin && window.confirm("Are you sure you want to logout?")) {
       try {
+        setLoading(true);
         let response = await api.post("/user/logout");
         showSuccess(response.data.message);
+        checkLoggedin();
+        navigate("/");
       } catch (error) {
-        console.log("Error in logout:", error);
         showError(error.response.data.error || "Error in logout");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -74,8 +82,9 @@ export const LoginProvider = ({ children }) => {
   return (
     <LoginContext.Provider
       value={{
+        checkLoggedin,
         islogedin,
-        userId, 
+        userId,
         role,
         email,
         name,

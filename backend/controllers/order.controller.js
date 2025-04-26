@@ -3,7 +3,7 @@ import { Order } from "../models/Order.model.js";
 import { Products } from "../models/product.model.js";
 
 const createOrderForCart = async (req, res) => {
-  const { shippingAdress } = req.body;
+  const { userDescription, shippingAdress } = req.body;
   const user = req.user;
   try {
     const usercart = await Cart.findOne({ user: user }).populate(
@@ -21,6 +21,7 @@ const createOrderForCart = async (req, res) => {
     const order = new Order({
       user,
       items: usercart.items,
+      userDescription,
       shippingAdress,
       totalAmount: totalAmount,
     });
@@ -41,7 +42,7 @@ const createOrderForCart = async (req, res) => {
 const createOrderForOneProduct = async (req, res) => {
   const user = req.user;
   const productid = req.params.id;
-  let { shippingAdress, quantity } = req.body;
+  let { shippingAdress, quantity, userDescription } = req.body;
   if (!shippingAdress) {
     return res.status(400).json({ error: "shipping adress require" });
   }
@@ -63,6 +64,7 @@ const createOrderForOneProduct = async (req, res) => {
           quantity: quantity,
         },
       ],
+      userDescription,
       shippingAdress,
       totalAmount: product.price * quantity,
     });

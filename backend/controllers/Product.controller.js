@@ -6,7 +6,7 @@ import {
 } from "../utils/Cloudinary.util.js";
 
 const addProduct = async (req, res) => {
-  const { name, description, price, discount, category } = req.body;
+  const { name, description, price, discount, category, brand } = req.body;
   const localfiles = req.files;
 
   if (!name || !description || !price || !category || !req.files) {
@@ -41,6 +41,7 @@ const addProduct = async (req, res) => {
       description,
       price,
       discount,
+      brand,
       image: uploadedImages,
       category: findcategory,
     });
@@ -89,7 +90,7 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const productid = req.params.id;
-  const { name, description, price, category } = req.body;
+  const { name, description, price, category, discount, brand } = req.body;
   const newimage = req.file?.path;
 
   if (req.user.role === "user") {
@@ -117,6 +118,8 @@ const updateProduct = async (req, res) => {
     product.name = name;
     product.description = description;
     product.price = price;
+    product.discount = discount;
+    product.brand = brand;
 
     let findcategory = await Category.findOne({ name: category });
 

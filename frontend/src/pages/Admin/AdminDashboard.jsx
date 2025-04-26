@@ -58,7 +58,7 @@ function AdminDashboard() {
               }}
               className="flex items-center space-x-3 hover:bg-blue-700 p-3 rounded w-full"
             >
-              <FaBox /> <span>Delete Product</span>
+              <FaBox /> <span>edit / Delete Product</span>
             </button>
           </li>
           <li>

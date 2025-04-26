@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useToast } from "../../context/ToastContext";
 import api from "../../services/api";
-import Loader from "../../components/Loader";
+import { useLoading } from "../../context/LoadingContext";
 
 export default function AddAdmin() {
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(false);
+  const { setLoading } = useLoading();
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -37,7 +37,6 @@ export default function AddAdmin() {
 
   return (
     <div>
-      {loading && <Loader />}
       <h2 className="text-2xl font-semibold mb-4">Add Admin</h2>
       <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
         <input

@@ -1,18 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import api from "../../services/api";
-import Loader from "../../components/Loader";
+import { useLoading } from "../../context/LoadingContext";
 
 export default function AddProduct() {
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading } = useLoading();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [discount, setDiscount] = useState(0);
   const [category, setCategory] = useState("");
+  const [brand, setBrand] = useState("");
   const [image, setImage] = useState([]);
-  const [previewUrl, setPreviewUrl] = useState(null);
   const [categoryForD, setCategoryForD] = useState(null);
   const fileInputRef = useRef();
+
 
   const fetchCategories = async () => {
     try {
@@ -57,6 +58,7 @@ export default function AddProduct() {
     formData.append("name", name);
     formData.append("description", description);
     formData.append("price", price);
+    formData.append("brand", brand);
     formData.append("discount", discount);
     formData.append("category", category);
     for (let i = 0; i < image.length; i++) {
@@ -77,7 +79,6 @@ export default function AddProduct() {
       setPrice("");
       setCategory("");
       setImage(null);
-      setPreviewUrl(null);
     } catch (error) {
       console.log(error);
       alert(
@@ -91,7 +92,6 @@ export default function AddProduct() {
 
   return (
     <div>
-      {loading && <Loader />}
       <h2 className="text-2xl font-bold mb-4">Add Product</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -127,15 +127,13 @@ export default function AddProduct() {
           className="w-full p-3 border rounded"
           required
         />
-        {/* <input
+        <input
           type="text"
           placeholder="Brand"
-          // value={price}
-          // onChange={(e) => setPrice(e.target.value)}
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
           className="w-full p-3 border rounded"
-          required
-          min="0"
-        /> */}
+        />
 
         <div className="space-y-2">
           <label className="block font-semibold">Choose Category</label>

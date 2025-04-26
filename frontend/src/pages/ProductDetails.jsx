@@ -1,17 +1,17 @@
 import { useParams } from "react-router-dom";
 import api from "../services/api";
 import { useState, useEffect } from "react";
-import Loader from "../components/Loader";
 import { useToast } from "../context/ToastContext";
 import OrderPage from "./Orders/OrderPage";
 import { useCart } from "../context/CartContext";
+import { useLoading } from "../context/LoadingContext";
 
 export default function ProductDetails() {
   const { showSuccess, showError } = useToast();
+  const { loading, setLoading } = useLoading();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [loading, setLoading] = useState(true);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const { addtoCartHandle } = useCart();
   const [currIndImg, setCurrIndImg] = useState(0);
@@ -46,13 +46,13 @@ export default function ProductDetails() {
     setShowOrderModal(true);
   };
 
-  const handlePlaceOneProductOrder = async (shippingInfo) => {
+  const handlePlaceOneProductOrder = async (shippingInfo, userDescription) => {
     if (window.confirm("are you sure you want to place this order")) {
       try {
         setLoading(true);
         let res = await api.post(
           `/order/createOrderforOneProduct/${product._id}`,
-          { shippingAdress: shippingInfo, quantity }
+          { shippingAdress: shippingInfo, quantity, userDescription }
         );
         showSuccess(res.data.message);
         setShowOrderModal(false);
@@ -73,8 +73,6 @@ export default function ProductDetails() {
       ? setCurrIndImg(0)
       : setCurrIndImg(currIndImg + 1);
   };
-
-  if (loading) return <Loader />;
 
   if (!product) {
     return (
@@ -115,7 +113,7 @@ export default function ProductDetails() {
             <p className="text-lg md:text-2xl mt-1">
               {product.discount > 0 ? (
                 <>
-                  <span className="text-red-600 font-bold mr-2">
+                  <span className="text-blue-500 font-bold mr-2">
                     ₹{product.finalPrice}
                   </span>
                   <span className="line-through text-gray-500 text-base">
@@ -166,7 +164,7 @@ export default function ProductDetails() {
             <p className="text-base font-medium text-gray-800">
               Total:{" "}
               <span className="text-green-600 font-bold">
-                ₹{product.price * quantity}
+                ₹{product.finalPrice * quantity}
               </span>
             </p>
           )}

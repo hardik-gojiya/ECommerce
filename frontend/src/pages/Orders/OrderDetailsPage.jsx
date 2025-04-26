@@ -43,57 +43,70 @@ function OrderDetailsPage() {
     );
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-10 mt-10 bg-white rounded-xl shadow-xl relative">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
+    <div className="max-w-4xl mx-auto p-6 mt-12 bg-white rounded-2xl shadow-2xl space-y-10 relative">
+      <h2 className="text-4xl font-bold text-center text-gray-900 mb-6">
         Order Details
       </h2>
 
+      {/* User Description */}
+      {order?.userDescription && (
+        <div className="bg-gray-50 p-4 rounded-lg shadow-inner border border-gray-200">
+          <h3 className="font-semibold text-gray-700 mb-1">User Description</h3>
+          <p className="text-gray-600">{order.userDescription}</p>
+        </div>
+      )}
+
       {/* Shipping Address */}
       <div
-        className={`space-y-2 border-b p-4 ${
+        className={`p-5 rounded-xl border shadow-sm ${
           order.status === "Processing"
-            ? "bg-yellow-50 border-yellow-300"
+            ? "bg-teal-50 border-teal-300 text-teal-700"
             : order.status === "Shipped"
-            ? "bg-blue-50 border-blue-300"
+            ? "bg-indigo-50 border-indigo-300 text-indigo-700"
             : order.status === "Delivered"
-            ? "bg-green-50 border-green-300"
+            ? "bg-slate-100 border-slate-300 text-slate-700"
             : order.status === "Cancelled"
-            ? "bg-red-200 text-red-800"
-            : "bg-gray-50 border-gray-300"
+            ? "bg-rose-100 border-rose-300 text-rose-700"
+            : "bg-gray-50 border-gray-300 text-gray-700"
         }`}
       >
-        <h3 className="text-xl font-semibold text-gray-700">
+        <h3 className="text-2xl font-semibold text-gray-800 mb-3">
           Shipping Address
         </h3>
-        <p>
-          <span className="font-medium">Street:</span>{" "}
-          {order.shippingAdress.street}
-        </p>
-        <p>
-          <span className="font-medium">City:</span> {order.shippingAdress.city}
-        </p>
-        <p>
-          <span className="font-medium">State:</span>{" "}
-          {order.shippingAdress.state}
-        </p>
+        <div className="space-y-1 text-gray-700">
+          <p>
+            <span className="font-medium">Street:</span>{" "}
+            {order.shippingAdress.street}
+          </p>
+          <p>
+            <span className="font-medium">City:</span>{" "}
+            {order.shippingAdress.city}
+          </p>
+          <p>
+            <span className="font-medium">State:</span>{" "}
+            {order.shippingAdress.state}
+          </p>
+        </div>
       </div>
 
       {/* Order Items */}
-      <div className="space-y-4 border-b pb-4">
-        <h3 className="text-xl font-semibold text-gray-700">Ordered Items</h3>
+      <div className="space-y-4">
+        <h3 className="text-2xl font-semibold text-gray-800 mb-3">
+          Ordered Items
+        </h3>
         {order.items.map((item) => (
           <Link
             to={`/product/${item.product._id}`}
             key={item._id}
-            className="flex items-center space-x-4 border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
+            className="flex items-center gap-4 border rounded-xl p-4 bg-gray-50 hover:bg-gray-100 transition"
           >
             <img
               src={item.product.image}
               alt={item.product.name}
-              className="w-20 h-20 object-cover rounded"
+              className="w-20 h-20 object-cover rounded-md"
             />
             <div className="flex-1">
-              <p className="text-lg font-semibold text-gray-800">
+              <p className="text-lg font-semibold text-gray-900">
                 {item.product.name}
               </p>
               <p className="text-sm text-gray-600 line-clamp-2">
@@ -103,7 +116,7 @@ function OrderDetailsPage() {
                 ₹{item.product.price} × {item.quantity}
               </p>
             </div>
-            <p className="font-semibold text-blue-600 text-lg">
+            <p className="font-semibold text-blue-600 text-lg whitespace-nowrap">
               ₹{item.product.price * item.quantity}
             </p>
           </Link>
@@ -112,60 +125,70 @@ function OrderDetailsPage() {
 
       {/* Order Summary */}
       <div
-        className={`space-y-2 ${
+        className={`p-5 rounded-xl border shadow-sm ${
           order.status === "Processing"
-            ? "bg-yellow-50 border-yellow-300"
+            ? "bg-teal-50 border-teal-300 text-teal-700"
             : order.status === "Shipped"
-            ? "bg-blue-50 border-blue-300"
+            ? "bg-indigo-50 border-indigo-300 text-indigo-700"
             : order.status === "Delivered"
-            ? "bg-green-50 border-green-300"
+            ? "bg-slate-100 border-slate-300 text-slate-700"
             : order.status === "Cancelled"
-            ? "bg-red-200 text-red-800"
-            : "bg-gray-50 border-gray-300"
-        } border-b p-4`}
+            ? "bg-rose-100 border-rose-300 text-rose-700"
+            : "bg-gray-50 border-gray-300 text-gray-700"
+        }`}
       >
-        <h3 className="text-xl font-semibold text-gray-700">Order Summary</h3>
-        <p>
-          <span className="font-medium">Order ID:</span> {order._id}
-        </p>
-        <p>
-          <span className="font-medium">Total Amount:</span> ₹
-          {order.totalAmount}
-        </p>
-        <p>
-          <span className="font-medium">Status:</span>{" "}
-          <span
-            className={`capitalize ${
-              order.status === "pending"
-                ? "text-yellow-600"
-                : order.status === "shipped"
-                ? "text-blue-600"
-                : order.status === "delivered"
-                ? "text-green-600"
-                : "text-gray-600"
-            }`}
-          >
-            {order.status}
-          </span>
-        </p>
-        <p>
-          <span className="font-medium">Payment Method:</span>{" "}
-          {order.paymentMethod}
-        </p>
-        <p>
-          <span className="font-medium">Ordered At:</span>{" "}
-          {new Date(order.createdAt).toLocaleString()}
-        </p>
+        <h3 className="text-2xl font-semibold text-gray-800 mb-3">
+          Order Summary
+        </h3>
+        <div className="space-y-1 text-gray-700">
+          <p>
+            <span className="font-medium">Order ID:</span> {order._id}
+          </p>
+          <p>
+            <span className="font-medium">Total Amount:</span> ₹
+            {order.totalAmount}
+          </p>
+          <p>
+            <span className="font-medium">Status:</span>{" "}
+            <span
+              className={`capitalize font-medium ${
+                order.status === "Processing"
+                  ? "text-teal-700"
+                  : order.status === "Shipped"
+                  ? "text-indigo-700"
+                  : order.status === "Delivered"
+                  ? "text-slate-700"
+                  : order.status === "Cancelled"
+                  ? "text-rose-700"
+                  : "text-gray-700"
+              }`}
+            >
+              {order.status}
+            </span>
+          </p>
+          <p>
+            <span className="font-medium">Payment Method:</span>{" "}
+            {order.paymentMethod}
+          </p>
+          <p>
+            <span className="font-medium">Ordered At:</span>{" "}
+            {new Date(order.createdAt).toLocaleString()}
+          </p>
+        </div>
       </div>
+
+      {/* Cancel Button */}
       {(order.status === "Processing" ||
         order.status === "Placed" ||
         order.status === "Shipped") && (
-        <button
-          onClick={() => cancleOrder()}
-          className="text-sm px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-        >
-          Cancle order
-        </button>
+        <div className="text-center">
+          <button
+            onClick={() => cancleOrder()}
+            className="text-sm px-5 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition"
+          >
+            Cancel Order
+          </button>
+        </div>
       )}
     </div>
   );

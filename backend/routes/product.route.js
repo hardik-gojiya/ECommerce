@@ -19,7 +19,7 @@ router.post(
   addProduct
 );
 router.get("/getAllProducts", fetchAllProducts);
-router.get("/getProductById/:id", AuthMiddleware, getProductById);
+router.get("/getProductById/:id", getProductById);
 router.put(
   "/updateProduct/:id",
   upload.single("image"),

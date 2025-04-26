@@ -4,6 +4,7 @@ import { useToast } from "../../context/ToastContext";
 function OrderPage({ setShowOrderModal, handlePlaceOrder }) {
   const { showError, showSuccess } = useToast();
 
+  const [userDescription, setuserDescription] = useState("");
   const [shippingInfo, setShippingInfo] = useState({
     street: "",
     city: "",
@@ -18,6 +19,13 @@ function OrderPage({ setShowOrderModal, handlePlaceOrder }) {
       <div className="fixed inset-0  bg-transparent backdrop-blur-xs  bg-opacity-50 flex justify-center items-center z-50">
         <div className="bg-white p-6 rounded-lg w-full max-w-lg">
           <h3 className="text-xl font-bold mb-4">Shipping Information</h3>
+
+          <textarea
+            className="w-full border p-2 rounded"
+            placeholder="add instruction"
+            value={userDescription}
+            onChange={(e) => setuserDescription(e.target.value)}
+          />
 
           <div className="space-y-3">
             {["street", "city", "state", "postalCode", "country"].map(
@@ -74,7 +82,7 @@ function OrderPage({ setShowOrderModal, handlePlaceOrder }) {
                   showError("shiping adress is required");
                   return;
                 } else {
-                  handlePlaceOrder(shippingInfo);
+                  handlePlaceOrder(shippingInfo, userDescription);
                 }
               }}
               className="px-4 py-2 bg-blue-600 text-white rounded"

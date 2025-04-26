@@ -5,9 +5,10 @@ import api from "../services/api";
 import { Link, useLocation } from "react-router-dom";
 import OrderPage from "./Orders/OrderPage";
 import { useCart } from "../context/CartContext";
+import { useLoading } from "../context/LoadingContext";
 
 export default function Profile() {
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading } = useLoading();
   const { userId, name, email, phone, address } = useLogin();
   const { showSuccess, showError } = useToast();
   const {
@@ -90,11 +91,12 @@ export default function Profile() {
     setShowOrderModal(true);
   };
 
-  const handlePlaceCartOrder = async (shippingInfo) => {
+  const handlePlaceCartOrder = async (shippingInfo, userDescription) => {
     if (window.confirm("are you sure want to place order?")) {
       try {
         let res = await api.post(`/order/createOrderforCart`, {
           shippingAdress: shippingInfo,
+          userDescription,
         });
         showSuccess(res?.data.message);
         setShowOrderModal(false);

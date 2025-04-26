@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useLogin } from "./LoginContext";
 import api from "../services/api";
 import { useToast } from "./ToastContext";
+import { useLoading } from "./LoadingContext";
+import { useNavigate } from "react-router-dom";
 
 const CartContext = createContext();
 
@@ -10,9 +12,10 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
+  const navigate = useNavigate();
   const { userId } = useLogin();
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(true);
+  const { setLoading } = useLoading();
   const [cartItems, setCartItems] = useState([]);
 
   const fetchUserCart = async () => {
@@ -29,6 +32,10 @@ export const CartProvider = ({ children }) => {
 
   const addtoCartHandle = async (e, id, quantity) => {
     e.preventDefault();
+    if (!quantity) {
+      quantity = 1;
+    }
+
     try {
       setLoading(true);
       const res = await api.post(`/cart/addToCart`, {
@@ -36,7 +43,19 @@ export const CartProvider = ({ children }) => {
         quantity: quantity,
       });
       fetchUserCart();
-      showSuccess(res.data.message);
+      showSuccess(
+        <div>
+          <p>{res.data.message || "Product added successfully!"}</p>
+          <button
+            className="text-blue-700 underline text-sm hover:text-blue-900"
+            onClick={() => {
+              navigate("/profile#cart");
+            }}
+          >
+            Go to Cart
+          </button>
+        </div>
+      );
     } catch (error) {
       showError(error?.response?.data?.error || "Failed to add to cart");
     } finally {
@@ -71,11 +90,14 @@ export const CartProvider = ({ children }) => {
       if (!window.confirm("Are you sure you want to empty the cart?")) {
         return;
       }
+      setLoading(true);
       let res = await api.delete(`/cart/removeItemFromCart/${productid}`);
       showSuccess(res.data.message);
       fetchUserCart();
     } catch (error) {
       showError(error?.response?.data?.error || "error to remove item");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,11 +114,14 @@ export const CartProvider = ({ children }) => {
       if (!window.confirm("Are you sure you want to empty the cart?")) {
         return;
       }
+      setLoading(true);
       let res = await api.delete(`/cart/emptyCart/${userId}`);
       showSuccess(res.data.message || "Cart emptied successfully");
       fetchUserCart();
     } catch (error) {
       showError(error?.response?.data?.error || "error to empty cart");
+    } finally {
+      setLoading(false);
     }
   };
 
