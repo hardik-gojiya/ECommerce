@@ -101,7 +101,7 @@ function OrderDetailsPage() {
             className="flex items-center gap-4 border rounded-xl p-4 bg-gray-50 hover:bg-gray-100 transition"
           >
             <img
-              src={item.product.image}
+              src={item.product.image[0]}
               alt={item.product.name}
               className="w-20 h-20 object-cover rounded-md"
             />

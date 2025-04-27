@@ -22,7 +22,7 @@ router.get("/getAllProducts", fetchAllProducts);
 router.get("/getProductById/:id", getProductById);
 router.put(
   "/updateProduct/:id",
-  upload.single("image"),
+  upload.array("image"),
   AuthMiddleware,
   updateProduct
 );

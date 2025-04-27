@@ -5,8 +5,11 @@ import { useToast } from "../context/ToastContext";
 import OrderPage from "./Orders/OrderPage";
 import { useCart } from "../context/CartContext";
 import { useLoading } from "../context/LoadingContext";
+import { useLogin } from "../context/LoginContext";
+import EditProductCard from "./Admin/EditProductCard";
 
 export default function ProductDetails() {
+  const { role: userrole } = useLogin();
   const { showSuccess, showError } = useToast();
   const { loading, setLoading } = useLoading();
   const { id } = useParams();
@@ -15,21 +18,7 @@ export default function ProductDetails() {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const { addtoCartHandle } = useCart();
   const [currIndImg, setCurrIndImg] = useState(0);
-
-  // const addtoCartHandle = async (id) => {
-  //   try {
-  //     setLoading(true);
-  //     const res = await api.post(`/cart/addToCart`, {
-  //       productid: id,
-  //       quantity: quantity,
-  //     });
-  //     showSuccess(res.data.message);
-  //   } catch (error) {
-  //     showError(error?.response?.data?.error || "Failed to add to cart");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const [editProduct, setEditProduct] = useState(null);
 
   const fetchOneProduct = async () => {
     try {
@@ -81,6 +70,21 @@ export default function ProductDetails() {
       </p>
     );
   }
+
+  const handleDelete = async (id) => {
+    if (window.confirm("are you sure you want to delete this product")) {
+      try {
+        setLoading(true);
+        let res = await api.delete(`/products/deleteProduct/${id}`);
+        showSuccess(res.data.message || "Product deleted successfully!");
+        fetchOneProduct();
+      } catch (error) {
+        showError(error?.response?.data.error || "Error deleting product.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
@@ -185,6 +189,22 @@ export default function ProductDetails() {
               Buy Now
             </button>
           </div>
+          {userrole != "user" && (
+            <div className="flex justify-between">
+              <button
+                onClick={() => setEditProduct(product)}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(product._id)}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -193,6 +213,13 @@ export default function ProductDetails() {
         <OrderPage
           setShowOrderModal={setShowOrderModal}
           handlePlaceOrder={handlePlaceOneProductOrder}
+        />
+      )}
+
+      {editProduct && (
+        <EditProductCard
+          product={editProduct}
+          setEditProduct={setEditProduct}
         />
       )}
     </div>

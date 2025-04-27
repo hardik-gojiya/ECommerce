@@ -83,7 +83,7 @@ export default function DeleteProduct() {
             >
               <Link to={`/product/${product._id}`}>
                 <img
-                  src={product.image}
+                  src={product.image[0]}
                   alt={product.name}
                   className="w-full h-40 object-cover mb-4 rounded"
                 />

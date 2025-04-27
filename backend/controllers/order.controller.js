@@ -1,6 +1,22 @@
 import { Cart } from "../models/Cart.model.js";
 import { Order } from "../models/Order.model.js";
 import { Products } from "../models/product.model.js";
+import { nodeMailerFunc } from "../utils/mailer.util.js";
+
+let statusColor = "#4f46e5";
+const statusColorfun = (status) => {
+  if (status === "Delivered") {
+    statusColor = "green";
+  } else if (status === "Cancelled") {
+    statusColor = "red";
+  } else if (status === "Shipped") {
+    statusColor = "orange";
+  } else if (status === "Placed") {
+    statusColor = "blue";
+  } else if (status === "Processing") {
+    statusColor = "yellow";
+  }
+};
 
 const createOrderForCart = async (req, res) => {
   const { userDescription, shippingAdress } = req.body;
@@ -120,12 +136,14 @@ const cancleOrder = async (req, res) => {
   const orderid = req.params.id;
 
   try {
-    let order = await Order.findOne({ _id: orderid });
+    let order = await Order.findOne({ _id: orderid })
+      .populate("user")
+      .populate("items.product");
     if (!order) {
       return res.status(404).json({ error: "order not found" });
     }
 
-    if (req.user._id.toString() != order.user.toString()) {
+    if (req.user._id.toString() != order.user._id.toString()) {
       return res.status(400).json({ error: "you can cancle only your orders" });
     }
 
@@ -138,6 +156,50 @@ const cancleOrder = async (req, res) => {
 
     order.status = "Cancelled";
     await order.save();
+    const text = `
+      <div style="border:1px solid #ccc; padding:20px; border-radius:8px; background:#fff;">
+        <h3 style="color:#4f46e5;">Order ID: ${order._id}</h3>
+        <p><strong>User Name:</strong> ${order.user?.name || "N/A"}</p>
+        <p><strong>User Email:</strong> ${order.user?.email || "N/A"}</p>
+        <p><strong>Phone:</strong> ${order.user?.phone}</p>
+        <hr />
+        <p style="color:${statusColor};"><strong>Status:</strong> ${
+      order.status
+    }</p>
+        <p><strong>Total Amount:</strong> ₹${order.totalAmount}</p>
+        <p><strong>Payment Method:</strong> ${order.paymentMethod}</p>
+        <p><strong>Is Paid:</strong> ${order.ispaid ? "Yes" : "No"}</p>
+        <p><strong>Is Delivered:</strong> ${
+          order.status === "Delivered" ? "Yes" : "No"
+        }</p>
+        <hr />
+        <h4>Shipping Address:</h4>
+        <p><strong>street:</strong> ${order.shippingAdress?.street}</p>
+        <p><strong>city, state :</strong> ${order.shippingAdress?.city}, ${
+      order.shippingAdress?.state
+    }</p>
+        <p><strong>postalCode:</strong> ${order.shippingAdress?.postalCode}</p>
+        <p><strong>country:</strong> ${order.shippingAdress?.country}</p>
+        <hr />
+        <h4>Items:</h4>
+        <ul>
+          ${order.items
+            .map(
+              (item) => `
+            <li>${item.product?.name || "Product"} - ₹${
+                item.product?.price
+              } × ${item.quantity}</li>
+          `
+            )
+            .join("")}
+        </ul>
+      </div>
+    `;
+    nodeMailerFunc(
+      order?.user?.email,
+      `Your order ${order._id} has been Cancelled by You`,
+      text
+    );
     return res.status(200).json({ message: "order Cancelled", order });
   } catch (error) {
     console.log(error);
@@ -153,7 +215,9 @@ const changeStatusofOrderByAdmin = async (req, res) => {
       .json({ error: "only admin can change status of orders" });
   }
   try {
-    let order = await Order.findById(orderid);
+    let order = await Order.findById(orderid)
+      .populate("user")
+      .populate("items.product");
     if (!order) {
       return res.status(404).json({ error: "order not found" });
     }
@@ -169,6 +233,54 @@ const changeStatusofOrderByAdmin = async (req, res) => {
     }
     order.status = status;
     await order.save();
+    console.log(order);
+
+    // send mail to order user
+    const text = `
+      <div style="border:1px solid #ccc; padding:20px; border-radius:8px; background:#fff;">
+        <h3 style="color:#4f46e5;">Order ID: ${order._id}</h3>
+        <p><strong>User Name:</strong> ${order.user?.name || "N/A"}</p>
+        <p><strong>User Email:</strong> ${order.user?.email || "N/A"}</p>
+        <p><strong>Phone:</strong> ${order.user?.phone}</p>
+        <hr />
+        <p style="color:${statusColor};"><strong>Status:</strong> ${
+      order.status
+    }</p>
+        <p><strong>Total Amount:</strong> ₹${order.totalAmount}</p>
+        <p><strong>Payment Method:</strong> ${order.paymentMethod}</p>
+        <p><strong>Is Paid:</strong> ${order.ispaid ? "Yes" : "No"}</p>
+        <p><strong>Is Delivered:</strong> ${
+          order.status === "Delivered" ? "Yes" : "No"
+        }</p>
+        <hr />
+        <h4>Shipping Address:</h4>
+        <p><strong>street:</strong> ${order.shippingAdress?.street}</p>
+        <p><strong>city, state :</strong> ${order.shippingAdress?.city}, ${
+      order.shippingAdress?.state
+    }</p>
+        <p><strong>postalCode:</strong> ${order.shippingAdress?.postalCode}</p>
+        <p><strong>country:</strong> ${order.shippingAdress?.country}</p>
+        <hr />
+        <h4>Items:</h4>
+        <ul>
+          ${order.items
+            .map(
+              (item) => `
+            <li>${item.product?.name || "Product"} - ₹${
+                item.product?.price
+              } × ${item.quantity}</li>
+          `
+            )
+            .join("")}
+        </ul>
+      </div>
+    `;
+    nodeMailerFunc(
+      order?.user?.email,
+      `Your order ${order._id} has been ${order.status}`,
+      text
+    );
+
     return res
       .status(200)
       .json({ message: "status changed sucessfully", order });

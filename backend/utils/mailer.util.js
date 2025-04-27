@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-const nodeMailerFunc = async ({ toemail, subject, text }) => {
+const nodeMailerFunc = async (toemail, subject, text) => {
   var transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -14,14 +14,14 @@ const nodeMailerFunc = async ({ toemail, subject, text }) => {
     from: `Ecommerce <${process.env.EMAIL_USER}>`,
     to: toemail,
     subject: subject,
-    text: text,
+    html: `${text}`,
   };
 
   const info = await transporter.sendMail(mailOptions);
   if (!info || !info.accepted || info.accepted.length === 0) {
-    return res.status(500).json({ error: "Failed to send OTP" });
+    throw new Error("Failed to send email");
   }
-  return res.status(200).json({ message: "otp sent succesfully" });
+  return "Mail sent successfully";
 };
 
 export { nodeMailerFunc };

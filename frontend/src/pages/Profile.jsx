@@ -212,7 +212,7 @@ export default function Profile() {
                   >
                     <Link to={`/product/${item.product._id}`}>
                       <img
-                        src={item.product.image}
+                        src={item.product.image[0]}
                         alt={item.product.name}
                         className="w-24 h-24 object-cover rounded-xl"
                       />
@@ -222,7 +222,7 @@ export default function Profile() {
                         {item.product.name}
                       </h4>
                       <p className="text-sm text-gray-600 mt-1">
-                        ₹{item.product.price} × {item.quantity}
+                        ₹{item.product.finalPrice} × {item.quantity}
                       </p>
                       <div className="flex space-x-3 mt-3">
                         <button
@@ -249,7 +249,7 @@ export default function Profile() {
                       </div>
                     </div>
                     <p className="text-md font-semibold text-indigo-600 whitespace-nowrap mt-2 md:mt-0">
-                      ₹{item.product.price * item.quantity}
+                      ₹{item.product.finalPrice * item.quantity}
                     </p>
                   </div>
                 ))}

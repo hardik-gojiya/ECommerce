@@ -90,8 +90,15 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const productid = req.params.id;
-  const { name, description, price, category, discount, brand } = req.body;
-  const newimage = req.file?.path;
+  const {
+    name,
+    description,
+    price,
+    category,
+    discount,
+    brand,
+    existingImages,
+  } = req.body;
 
   if (req.user.role === "user") {
     return res.status(400).json({ error: "only admin can update product" });
@@ -104,16 +111,31 @@ const updateProduct = async (req, res) => {
       return res.status(404).json({ error: "product not found" });
     }
 
-    if (newimage) {
-      let oldimg = product.image;
+    const retainedImages = Array.isArray(existingImages)
+      ? existingImages
+      : existingImages
+      ? [existingImages]
+      : [];
 
-      let newcloudimgurl = await uploadOnClodinary(newimage);
-      if (!newcloudimgurl) {
-        return res.status(400).json({ error: "error while upload image" });
+    const newUploadUrls = [];
+    if (req.files && req.files.length > 0) {
+      for (let file of req.files) {
+        const cloudurl = await uploadOnClodinary(file.path);
+        if (!cloudurl) {
+          return res.status(400).json({ error: "Error while uploading image" });
+        }
+        newUploadUrls.push(cloudurl);
       }
-      product.image = newcloudimgurl;
+    }
+
+    const imageToDelete = product.image.filter(
+      (url) => !retainedImages.includes(url)
+    );
+    for (let oldimg of imageToDelete) {
       await deleteFromClodinary(oldimg);
     }
+
+    product.image = [...retainedImages, ...newUploadUrls];
 
     product.name = name;
     product.description = description;
@@ -134,7 +156,7 @@ const updateProduct = async (req, res) => {
     await product.save();
     return res
       .status(200)
-      .json({ message: "procuct updated sccussesfully", product });
+      .json({ message: "product updated sccussesfully", product });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "internal server error" });
