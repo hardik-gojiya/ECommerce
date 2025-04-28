@@ -14,6 +14,7 @@ import Footer from "./components/Footer";
 import OrderDetailsPage from "./pages/Orders/OrderDetailsPage";
 import PasswordChangeCard from "./components/PasswordChangeCard";
 import AllOrderofOneUser from "./pages/Orders/AllOrderofOneUser";
+import SubCategoryProducts from "./pages/SubCategoryProducts";
 
 function App() {
   const { role: userrole } = useLogin();
@@ -32,6 +33,10 @@ function App() {
         <Route path="/category/:id" element={<CategoryProducts />} />
         <Route path="/orderdetail/:id" element={<OrderDetailsPage />} />
         <Route path="/updatepassword" element={<PasswordChangeCard />} />
+        <Route
+          path="/SubCategory/:subCategory"
+          element={<SubCategoryProducts />}
+        />
 
         {/* Admin Routes */}
         {userrole === "admin" || userrole === "master admin" ? (

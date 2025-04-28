@@ -1,62 +1,32 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import api from "../services/api";
-import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
-const CategoryProducts = () => {
-  const { id } = useParams();
-  const { addtoCartHandle } = useCart();
+function SubCategoryProducts() {
   const [products, setProducts] = useState([]);
-  const [category, setCategory] = useState("");
+  const { subCategory } = useParams();
+  const { addtoCartHandle } = useCart();
 
-  const fetchCategoryProducts = async () => {
+  const fetchproducts = async () => {
     try {
-      const res = await api.get(`/products/fetchProductByCategory/${id}`);
-      setProducts(res.data.products);
+      const res = await api.get(
+        `/products/fetchProductBySubCategory/${subCategory}`
+      );
+      setProducts(res.data.products || []);
     } catch (error) {
-      console.error("Error loading category products:", error);
+      showError("Error fetching products");
     }
   };
-
-  const fetchCategory = async () => {
-    try {
-      const res = await api.get(`/category/getOneCategories/${id}`);
-      setCategory(res.data.category);
-    } catch (error) {
-      console.error("Error loading category:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchCategoryProducts();
-    fetchCategory();
-  }, [id]);
+    fetchproducts();
+  }, [subCategory]);
 
   return (
     <div className="max-w-7xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-        {category?.name} Products
-      </h2>
-
-      {category?.subCategories?.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          {category.subCategories.map((subCategory, idx) => (
-            <Link
-              key={idx}
-              to={`/SubCategory/${subCategory}`}
-              className="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full hover:bg-blue-200 transition"
-            >
-              {subCategory}
-            </Link>
-          ))}
-        </div>
-      )}
-
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">{subCategory}:</h1>
       {products.length === 0 ? (
-        <p className="text-center text-gray-600 dark:text-gray-300">
-          No products found.
-        </p>
+        <p className="text-gray-600 dark:text-gray-300">No products found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {products
@@ -113,6 +83,6 @@ const CategoryProducts = () => {
       )}
     </div>
   );
-};
+}
 
-export default CategoryProducts;
+export default SubCategoryProducts;

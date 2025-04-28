@@ -6,7 +6,8 @@ import {
 } from "../utils/Cloudinary.util.js";
 
 const addProduct = async (req, res) => {
-  const { name, description, price, discount, category, brand } = req.body;
+  const { name, description, price, discount, category, subCategory, brand } =
+    req.body;
   const localfiles = req.files;
 
   if (!name || !description || !price || !category || !req.files) {
@@ -27,6 +28,13 @@ const addProduct = async (req, res) => {
       });
       await findcategory.save();
     }
+
+    // if not sub category than ad it
+    if (!findcategory.subCategories.includes(subCategory)) {
+      findcategory.subCategories.push(subCategory);
+      await findcategory.save();
+    }
+
     let uploadedImages = [];
     for (const file of localfiles) {
       const cloudinaryurl = await uploadOnClodinary(file.path);
@@ -44,6 +52,7 @@ const addProduct = async (req, res) => {
       brand,
       image: uploadedImages,
       category: findcategory,
+      subCategory,
     });
     if (!product) {
       return res.status(400).json({ error: "error while adding project" });
@@ -195,6 +204,24 @@ const fetchProductByCategory = async (req, res) => {
     .json({ categoryName: category.name, products: products });
 };
 
+const fetchProductBySubCategory = async (req, res) => {
+  const subCategory = req.params.subCategory;
+  try {
+    const products = await Products.find({
+      subCategory: subCategory,
+    }).populate("category");
+    if (!products) {
+      return res
+        .status(404)
+        .json({ error: "no product found of this sub category" });
+    }
+    return res.status(200).json({ products: products });
+  } catch (error) {
+    console.log("error while fetching product by subcategory", error);
+    return res.status(500).json({ error: "internal server error" });
+  }
+};
+
 export {
   addProduct,
   fetchAllProducts,
@@ -202,4 +229,5 @@ export {
   updateProduct,
   deleteProduct,
   fetchProductByCategory,
+  fetchProductBySubCategory,
 };

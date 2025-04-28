@@ -9,11 +9,12 @@ export default function AddProduct() {
   const [price, setPrice] = useState("");
   const [discount, setDiscount] = useState(0);
   const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
   const [brand, setBrand] = useState("");
   const [image, setImage] = useState([]);
   const [categoryForD, setCategoryForD] = useState(null);
+  const [subcategoryForD, setSubCategoryForD] = useState(null);
   const fileInputRef = useRef();
-
 
   const fetchCategories = async () => {
     try {
@@ -61,6 +62,7 @@ export default function AddProduct() {
     formData.append("brand", brand);
     formData.append("discount", discount);
     formData.append("category", category);
+    formData.append("subCategory", subCategory);
     for (let i = 0; i < image.length; i++) {
       formData.append("image", image[i]);
     }
@@ -89,6 +91,19 @@ export default function AddProduct() {
       setLoading(false);
     }
   };
+
+  const fetchSubCategory = async () => {
+    try {
+      const res = await api.get(`/category/getSubCategoriesbyname/${category}`);
+      setSubCategoryForD(res.data.subCategories);
+    } catch (error) {
+      console.error("Error fetching subcategories:", error);
+    }
+  };
+  useEffect(() => {
+    fetchSubCategory();
+  }, [category]);
+  console.log(subcategoryForD);
 
   return (
     <div>
@@ -135,17 +150,20 @@ export default function AddProduct() {
           className="w-full p-3 border rounded"
         />
 
+        {/* category */}
         <div className="space-y-2">
           <label className="block font-semibold">Choose Category</label>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => {
+              setCategory(e.target.value), fetchSubCategory();
+            }}
             className="w-full p-3 border rounded"
           >
             <option value="">Select from list</option>
             {categoryForD &&
-              categoryForD.map((cat) => (
-                <option key={cat._id} value={cat.name}>
+              categoryForD.map((cat, idx) => (
+                <option key={idx} value={cat.name}>
                   {cat.name}
                 </option>
               ))}
@@ -158,6 +176,35 @@ export default function AddProduct() {
             onChange={(e) => setCategory(e.target.value)}
             className="w-full p-3 border rounded"
             value={category}
+          />
+        </div>
+
+        {/*sub category */}
+        <div className="space-y-2">
+          <label className="block font-semibold">Choose Sub Category</label>
+          <select
+            value={subCategory}
+            onChange={(e) => setSubCategory(e.target.value)}
+            className="w-full p-3 border rounded"
+          >
+            <option value="">Select from list</option>
+            {subcategoryForD &&
+              subcategoryForD.map((cat, idx) => (
+                <option key={idx} value={cat}>
+                  {cat}
+                </option>
+              ))}
+          </select>
+
+          <label className="block font-semibold">
+            Or Enter New Sub Category
+          </label>
+          <input
+            type="text"
+            placeholder="Enter custom category"
+            onChange={(e) => setSubCategory(e.target.value)}
+            className="w-full p-3 border rounded"
+            value={subCategory}
           />
         </div>
 

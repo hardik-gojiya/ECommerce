@@ -6,6 +6,7 @@ import {
   updateProduct,
   deleteProduct,
   fetchProductByCategory,
+  fetchProductBySubCategory,
 } from "../controllers/Product.controller.js";
 import { AuthMiddleware } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -28,5 +29,9 @@ router.put(
 );
 router.delete("/deleteProduct/:id", AuthMiddleware, deleteProduct);
 router.get("/fetchProductByCategory/:id", fetchProductByCategory);
+router.get(
+  "/fetchProductBySubCategory/:subCategory",
+  fetchProductBySubCategory
+);
 
 export default router;

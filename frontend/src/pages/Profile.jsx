@@ -176,7 +176,6 @@ export default function Profile() {
         </div>
 
         {/* Cart Section */}
-        {/* Cart Section */}
         <div
           id="cart"
           aria-label="cart"
@@ -210,10 +209,10 @@ export default function Profile() {
                     key={item.product._id}
                     className="flex flex-col md:flex-row items-center md:items-start justify-between border-b pb-4 gap-4 bg-white rounded-xl p-4 shadow-sm"
                   >
-                    <Link to={`/product/${item.product._id}`}>
+                    <Link to={`/product/${item.product?._id}`}>
                       <img
-                        src={item.product.image[0]}
-                        alt={item.product.name}
+                        src={item.product?.image[0]}
+                        alt={item.product?.name}
                         className="w-24 h-24 object-cover rounded-xl"
                       />
                     </Link>
@@ -222,25 +221,25 @@ export default function Profile() {
                         {item.product.name}
                       </h4>
                       <p className="text-sm text-gray-600 mt-1">
-                        ₹{item.product.finalPrice} × {item.quantity}
+                        ₹{item.product?.finalPrice} × {item.quantity}
                       </p>
                       <div className="flex space-x-3 mt-3">
                         <button
                           disabled={item.quantity === 1}
-                          onClick={() => decreaseQuantity(item.product._id)}
+                          onClick={() => decreaseQuantity(item.product?._id)}
                           className="text-sm px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition disabled:opacity-50"
                         >
                           -
                         </button>
                         <button
-                          onClick={() => increaseQuantity(item.product._id)}
+                          onClick={() => increaseQuantity(item.product?._id)}
                           className="text-sm px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
                         >
                           +
                         </button>
                         <button
                           onClick={() =>
-                            removeItem(item.product._id.toString())
+                            removeItem(item.product?._id.toString())
                           }
                           className="text-sm px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                         >
@@ -249,7 +248,7 @@ export default function Profile() {
                       </div>
                     </div>
                     <p className="text-md font-semibold text-indigo-600 whitespace-nowrap mt-2 md:mt-0">
-                      ₹{item.product.finalPrice * item.quantity}
+                      ₹{item.product?.finalPrice * item.quantity}
                     </p>
                   </div>
                 ))}
@@ -293,7 +292,7 @@ export default function Profile() {
                 .slice(0, 3)
                 .map((order) => (
                   <Link
-                    to={`/orderdetail/${order._id}`}
+                    to={`/orderdetail/${order?._id}`}
                     key={order._id}
                     className={`block border border-gray-200 rounded-xl p-5 sm:p-6 ${
                       order.status === "pending"
@@ -318,9 +317,9 @@ export default function Profile() {
                       {order.items.map((item, index) => (
                         <li key={index}>
                           <span className="font-medium text-gray-800">
-                            {item.product.name}
+                            {item?.product?.name}
                           </span>{" "}
-                          × {item.quantity}
+                          × {item?.quantity}
                         </li>
                       ))}
                     </ul>

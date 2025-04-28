@@ -18,7 +18,7 @@ export default function Home() {
       showError(error?.response?.data?.error || "Error fetching products");
     }
   };
-
+ 
   const fetchCategories = async () => {
     try {
       const res = await api.get("/category/getCategories");

@@ -31,6 +31,9 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
+    subCategory: {
+      type: String,
+    },
     brand: {
       type: String,
     },
