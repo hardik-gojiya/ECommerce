@@ -9,12 +9,14 @@ function EditProductCard({ product, setEditProduct }) {
   const [name, setName] = useState(product.name);
   const [description, setDescription] = useState(product.description);
   const [price, setPrice] = useState(product.price);
-  const [discount, setDiscount] = useState(product.discount);
+  const [discount, setDiscount] = useState(product.discount || 0);
   const [category, setCategory] = useState(product.category?.name || "");
-  const [brand, setBrand] = useState(product.brand);
+  const [brand, setBrand] = useState(product.brand || "");
+  const [subCategory, setSubCategory] = useState(product.subCategory || "");
   const [existingImages, setExistingImages] = useState(product.image || []);
   const [newImages, setNewImages] = useState([]);
   const [categoryForD, setCategoryForD] = useState(null);
+  const [subcategoryForD, setSubCategoryForD] = useState(null);
 
   const fetchCategories = async () => {
     try {
@@ -25,9 +27,19 @@ function EditProductCard({ product, setEditProduct }) {
     }
   };
 
+  const fetchSubCategory = async () => {
+    try {
+      const res = await api.get(`/category/getSubCategoriesbyname/${category}`);
+      setSubCategoryForD(res.data.subCategories);
+    } catch (error) {
+      console.error("Error fetching subcategories:", error);
+    }
+  };
+  
   useEffect(() => {
     fetchCategories();
-  }, []);
+    fetchSubCategory();
+  }, [category]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -164,6 +176,35 @@ function EditProductCard({ product, setEditProduct }) {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="w-full p-3 border rounded"
+            />
+          </div>
+
+          {/*sub category */}
+          <div className="space-y-2">
+            <label className="block font-semibold">Choose Sub Category</label>
+            <select
+              value={subCategory}
+              onChange={(e) => setSubCategory(e.target.value)}
+              className="w-full p-3 border rounded"
+            >
+              <option value="">Select from list</option>
+              {subcategoryForD &&
+                subcategoryForD.map((cat, idx) => (
+                  <option key={idx} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+            </select>
+
+            <label className="block font-semibold">
+              Or Enter New Sub Category
+            </label>
+            <input
+              type="text"
+              placeholder="Enter custom category"
+              onChange={(e) => setSubCategory(e.target.value)}
+              className="w-full p-3 border rounded"
+              value={subCategory}
             />
           </div>
 

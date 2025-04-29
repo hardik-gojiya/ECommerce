@@ -136,6 +136,7 @@ const checkAuth = async (req, res) => {
       name: user.name || "",
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      shippingAdress: user.shippingAdress,
     });
   } catch (error) {
     console.log("error in AuthMiddleware ", error);
@@ -211,7 +212,7 @@ const addNewAdmin = async (req, res) => {
   const loginuser = req.user;
   const { name, email, phone, password, address } = req.body;
 
-  if (!name || !email || !phone || !password ) {
+  if (!name || !email || !phone || !password) {
     return res.status(400).json({ error: "all fields are required" });
   }
 
@@ -259,6 +260,31 @@ const addNewAdmin = async (req, res) => {
   }
 };
 
+const addShippingAddress = async (req, res) => {
+  const { street, city, state, postalCode, country } = req.body;
+  const userId = req.user._id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.shippingAdress = {
+      street,
+      city,
+      state,
+      postalCode,
+      country,
+    };
+    await user.save();
+    return res.status(200).json({ message: "Shipping address added" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export {
   registerUser,
   login,
@@ -267,4 +293,5 @@ export {
   updateProfilePassword,
   addNewAdmin,
   checkAuth,
+  addShippingAddress,
 };

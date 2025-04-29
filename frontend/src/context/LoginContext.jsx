@@ -24,6 +24,7 @@ export const LoginProvider = ({ children }) => {
   const [profilepic, setProfilepic] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
+  const [shippingAdress, setShippingAdress] = useState("");
 
   const checkLoggedin = async () => {
     try {
@@ -40,6 +41,7 @@ export const LoginProvider = ({ children }) => {
         setProfilepic("");
         setCreatedAt("");
         setUpdatedAt("");
+        setShippingAdress("");
         return;
       }
 
@@ -53,6 +55,7 @@ export const LoginProvider = ({ children }) => {
       setProfilepic(response.data.profilepic);
       setCreatedAt(response.data.createdAt);
       setUpdatedAt(response.data.updatedAt);
+      setShippingAdress(response.data.shippingAdress);
     } catch (error) {
       console.log(error);
       setIslogedin(false);
@@ -93,6 +96,7 @@ export const LoginProvider = ({ children }) => {
         profilepic,
         createdAt,
         updatedAt,
+        shippingAdress,
         setIslogedin,
         setEmail,
         handlelogOut,

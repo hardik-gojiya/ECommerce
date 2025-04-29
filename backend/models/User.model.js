@@ -27,6 +27,13 @@ const userSchema = new mongoose.Schema(
     address: {
       type: String,
     },
+    shippingAdress: {
+      street: String,
+      city: String,
+      state: String,
+      postalCode: String,
+      country: String,
+    },
   },
   { timestamps: true }
 );

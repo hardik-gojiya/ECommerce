@@ -103,7 +103,6 @@ export default function AddProduct() {
   useEffect(() => {
     fetchSubCategory();
   }, [category]);
-  console.log(subcategoryForD);
 
   return (
     <div>
@@ -134,14 +133,16 @@ export default function AddProduct() {
           required
           min="0"
         />
+
         <input
           type="number"
-          placeholder="discount"
+          placeholder="Discount"
           value={discount}
           onChange={(e) => setDiscount(e.target.value)}
           className="w-full p-3 border rounded"
           required
         />
+
         <input
           type="text"
           placeholder="Brand"
@@ -150,13 +151,14 @@ export default function AddProduct() {
           className="w-full p-3 border rounded"
         />
 
-        {/* category */}
+        {/* Category Selection */}
         <div className="space-y-2">
           <label className="block font-semibold">Choose Category</label>
           <select
             value={category}
             onChange={(e) => {
-              setCategory(e.target.value), fetchSubCategory();
+              setCategory(e.target.value);
+              fetchSubCategory();
             }}
             className="w-full p-3 border rounded"
           >
@@ -176,12 +178,13 @@ export default function AddProduct() {
             onChange={(e) => setCategory(e.target.value)}
             className="w-full p-3 border rounded"
             value={category}
+            disabled={category !== ""}
           />
         </div>
 
-        {/*sub category */}
+        {/* Subcategory Selection */}
         <div className="space-y-2">
-          <label className="block font-semibold">Choose Sub Category</label>
+          <label className="block font-semibold">Choose Subcategory</label>
           <select
             value={subCategory}
             onChange={(e) => setSubCategory(e.target.value)}
@@ -189,25 +192,27 @@ export default function AddProduct() {
           >
             <option value="">Select from list</option>
             {subcategoryForD &&
-              subcategoryForD.map((cat, idx) => (
-                <option key={idx} value={cat}>
-                  {cat}
+              subcategoryForD.map((sub, idx) => (
+                <option key={idx} value={sub}>
+                  {sub}
                 </option>
               ))}
           </select>
 
           <label className="block font-semibold">
-            Or Enter New Sub Category
+            Or Enter New Subcategory
           </label>
           <input
             type="text"
-            placeholder="Enter custom category"
+            placeholder="Enter custom subcategory"
             onChange={(e) => setSubCategory(e.target.value)}
             className="w-full p-3 border rounded"
             value={subCategory}
+            disabled={subCategory !== ""}
           />
         </div>
 
+        {/* Image Dropzone */}
         <div
           onClick={handleClickDropZone}
           onDragOver={(e) => e.preventDefault()}
@@ -240,7 +245,7 @@ export default function AddProduct() {
                       e.stopPropagation();
                       handleRemoveImage(idx);
                     }}
-                    className="absolute  top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700"
+                    className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700"
                   >
                     ❌
                   </button>

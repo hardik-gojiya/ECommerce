@@ -1,7 +1,9 @@
 import { Category } from "../models/Category.model.js";
+import { uploadOnClodinary } from "../utils/Cloudinary.util.js";
 
 const addCategory = async (req, res) => {
   const { name } = req.body;
+  const categoryImg = req.file;
   const user = req.user;
 
   if (user.role === "user") {
@@ -17,6 +19,13 @@ const addCategory = async (req, res) => {
     category = new Category({
       name,
     });
+    if (categoryImg) {
+      let cloudinaryImage = await uploadOnClodinary(categoryImg.path);
+      if (!cloudinaryImage) {
+        return res.status(400).json({ error: "error while uploading image" });
+      }
+      category.categoryImage = cloudinaryImage;
+    }
     await category.save();
     return res
       .status(201)
@@ -56,6 +65,8 @@ const addSubCategory = async (req, res) => {
     return res.status(500).json({ error: "internal server error " });
   }
 };
+
+
 
 const fetchOneCategory = async (req, res) => {
   const id = req.params.id;

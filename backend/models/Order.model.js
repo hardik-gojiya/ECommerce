@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema(
       ref: User,
       required: true,
     },
-    items: [
+    items: [ 
       {
         product: {
           type: mongoose.Schema.Types.ObjectId,
@@ -27,7 +27,7 @@ const orderSchema = new mongoose.Schema(
     shippingAdress: {
       street: String,
       city: String,
-      state: String,
+      state: String,  
       postalCode: String,
       country: String,
     },

@@ -38,32 +38,32 @@ function AllOrderofOneUser() {
             .reverse()
             .map((order) => (
               <Link
-                to={`/orderdetail/${order._id}`}
-                key={order._id}
+                to={`/orderdetail/${order?._id}`}
+                key={order?._id}
                 className={`block border border-gray-200 rounded-xl p-5 sm:p-6 ${
-                  order.status === "pending"
+                  order?.status === "pending"
                     ? "bg-yellow-100 hover:bg-yellow-200"
-                    : order.status === "shipped"
+                    : order?.status === "shipped"
                     ? "bg-blue-100 hover:bg-blue-200"
-                    : order.status === "delivered"
+                    : order?.status === "delivered"
                     ? "bg-green-100 hover:bg-green-200"
                     : "bg-gray-50 hover:shadow-md"
                 } transition-all duration-200 space-y-4`}
               >
                 {/* Order ID and Date */}
                 <div className="flex flex-col sm:flex-row justify-between text-sm sm:text-base text-gray-700 font-medium gap-1 sm:gap-0">
-                  <span className="break-all">Order ID: {order._id}</span>
-                  <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                  <span className="break-all">Order ID: {order?._id}</span>
+                  <span>{new Date(order?.createdAt).toLocaleDateString()}</span>
                 </div>
 
                 {/* Item List */}
                 <ul className="text-sm text-gray-600 list-disc pl-5 space-y-1">
-                  {order.items.map((item, index) => (
+                  {order?.items?.map((item, index) => (
                     <li key={index}>
                       <span className="font-medium text-gray-800">
-                        {item.product.name}
+                        {item?.product?.name}
                       </span>{" "}
-                      × {item.quantity}
+                      × {item?.quantity}
                     </li>
                   ))}
                 </ul>
@@ -74,23 +74,25 @@ function AllOrderofOneUser() {
                     Status:{" "}
                     <span
                       className={`capitalize ${
-                        order.status === "Processing"
+                        order?.status === "Processing"
                           ? "text-yellow-600"
-                          : order.status === "Shipped"
+                          : order?.status === "Shipped"
                           ? "text-blue-600"
-                          : order.status === "Delivered"
+                          : order?.status === "Delivered"
                           ? "text-green-600"
-                          : order.status === "Cancelled"
+                          : order?.status === "Cancelled"
                           ? "text-red-600"
                           : "text-gray-600"
                       }`}
                     >
-                      {order.status}
+                      {order?.status}
                     </span>
                   </span>
                   <span>
                     Total:{" "}
-                    <span className="text-green-600">₹{order.totalAmount}</span>
+                    <span className="text-green-600">
+                      ₹{order?.totalAmount}
+                    </span>
                   </span>
                 </div>
               </Link>

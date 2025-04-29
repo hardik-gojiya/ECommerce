@@ -18,7 +18,7 @@ export default function Home() {
       showError(error?.response?.data?.error || "Error fetching products");
     }
   };
- 
+
   const fetchCategories = async () => {
     try {
       const res = await api.get("/category/getCategories");
@@ -64,9 +64,11 @@ export default function Home() {
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 p-6 text-center"
             >
               <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
-                <i
-                  className={`fas fa-${category.icon} text-purple-600 text-2xl`}
-                ></i>
+                <img
+                  src={category.categoryImage || "path/to/default-image.png"}
+                  alt={category.name}
+                  className={`w-12 h-12 object-cover rounded-full`}
+                />
               </div>
               <h3 className="text-md font-semibold text-gray-700">
                 {category.name}

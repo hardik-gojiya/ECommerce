@@ -44,6 +44,13 @@ export default function ProductDetails() {
           { shippingAdress: shippingInfo, quantity, userDescription }
         );
         showSuccess(res.data.message);
+        let addshipaddress = await api.post(`/user/addShippingAddress`, {
+          street: shippingInfo?.street,
+          city: shippingInfo?.city,
+          state: shippingInfo?.state,
+          postalCode: shippingInfo?.postalCode,
+          country: shippingInfo?.country,
+        });
         setShowOrderModal(false);
       } catch (error) {
         showError(error?.response?.data?.error || "error to place order");
@@ -55,7 +62,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     fetchOneProduct();
-  }, [id]);
+  }, [id, editProduct]);
 
   const changeImage = () => {
     currIndImg === product.image.length - 1

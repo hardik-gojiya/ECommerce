@@ -8,10 +8,16 @@ import {
   getSubCategoryByName,
 } from "../controllers/Category.controller.js";
 import { AuthMiddleware } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.post("/addCategory", AuthMiddleware, addCategory);
+router.post(
+  "/addCategory",
+  upload.single("categoryImg"),
+  AuthMiddleware,
+  addCategory
+);
 router.get("/getCategories", getAllCategories);
 router.get("/getOneCategories/:id", fetchOneCategory);
 router.post("/addSubCategories", AuthMiddleware, addSubCategory);

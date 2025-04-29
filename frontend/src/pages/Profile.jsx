@@ -58,7 +58,7 @@ export default function Profile() {
   const fetchAllOrderOfUser = async () => {
     try {
       let res = await api.get(`/order/getAllOrderOfUser/${userId}`);
-      setOrders(res.data.orders || []);
+      setOrders(res?.data?.orders || []);
     } catch (error) {
       return;
     }
@@ -101,6 +101,13 @@ export default function Profile() {
         showSuccess(res?.data.message);
         setShowOrderModal(false);
         fetchAllOrderOfUser();
+        let addshipaddress = await api.post(`/user/addShippingAddress`, {
+          street: shippingInfo?.street,
+          city: shippingInfo?.city,
+          state: shippingInfo?.state,
+          postalCode: shippingInfo?.postalCode,
+          country: shippingInfo?.country,
+        });
       } catch (error) {
         showError(error?.response?.data.error || "error to place your order");
       }
@@ -170,7 +177,10 @@ export default function Profile() {
               Update Profile
             </button>
           </form>
-          <Link to="/updatepassword" className="mt-4">
+          <Link
+            to="/updatepassword"
+            className="block text-center mt-4 text-purple-600 hover:text-purple-800 font-semibold underline"
+          >
             update password
           </Link>
         </div>
@@ -206,40 +216,40 @@ export default function Profile() {
                 .filter((item) => item.product)
                 .map((item) => (
                   <div
-                    key={item.product._id}
+                    key={item?.product?._id || item._id}
                     className="flex flex-col md:flex-row items-center md:items-start justify-between border-b pb-4 gap-4 bg-white rounded-xl p-4 shadow-sm"
                   >
-                    <Link to={`/product/${item.product?._id}`}>
+                    <Link to={`/product/${item?.product?._id}`}>
                       <img
-                        src={item.product?.image[0]}
-                        alt={item.product?.name}
+                        src={item?.product?.image[0]}
+                        alt={item?.product?.name}
                         className="w-24 h-24 object-cover rounded-xl"
                       />
                     </Link>
                     <div className="flex-1 md:ml-6 w-full">
                       <h4 className="text-lg font-bold text-indigo-800">
-                        {item.product.name}
+                        {item?.product?.name}
                       </h4>
                       <p className="text-sm text-gray-600 mt-1">
-                        ₹{item.product?.finalPrice} × {item.quantity}
+                        ₹{item?.product?.finalPrice} × {item?.quantity}
                       </p>
                       <div className="flex space-x-3 mt-3">
                         <button
-                          disabled={item.quantity === 1}
-                          onClick={() => decreaseQuantity(item.product?._id)}
+                          disabled={item?.quantity === 1}
+                          onClick={() => decreaseQuantity(item?.product?._id)}
                           className="text-sm px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition disabled:opacity-50"
                         >
                           -
                         </button>
                         <button
-                          onClick={() => increaseQuantity(item.product?._id)}
+                          onClick={() => increaseQuantity(item?.product?._id)}
                           className="text-sm px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
                         >
                           +
                         </button>
                         <button
                           onClick={() =>
-                            removeItem(item.product?._id.toString())
+                            removeItem(item?.product?._id.toString())
                           }
                           className="text-sm px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                         >
@@ -248,7 +258,7 @@ export default function Profile() {
                       </div>
                     </div>
                     <p className="text-md font-semibold text-indigo-600 whitespace-nowrap mt-2 md:mt-0">
-                      ₹{item.product?.finalPrice * item.quantity}
+                      ₹{item?.product?.finalPrice * item?.quantity}
                     </p>
                   </div>
                 ))}
@@ -279,8 +289,13 @@ export default function Profile() {
           <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 border-b pb-4 mb-6">
             📦 Your Orders
           </h2>
-          <Link to="/all-orders-of-user">See Your All Orders</Link>
-          {orders.length === 0 ? (
+          <Link
+            to="/all-orders-of-user"
+            className="inline-block mb-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 text-sm"
+          >
+            See All Orders →
+          </Link>
+          {orders?.length === 0 ? (
             <p className="text-center text-gray-500 text-base">
               You have no orders yet.
             </p>
@@ -293,22 +308,22 @@ export default function Profile() {
                 .map((order) => (
                   <Link
                     to={`/orderdetail/${order?._id}`}
-                    key={order._id}
+                    key={order?._id}
                     className={`block border border-gray-200 rounded-xl p-5 sm:p-6 ${
-                      order.status === "pending"
+                      order?.status === "pending"
                         ? "bg-yellow-100 hover:bg-yellow-200"
-                        : order.status === "shipped"
+                        : order?.status === "shipped"
                         ? "bg-blue-100 hover:bg-blue-200"
-                        : order.status === "delivered"
+                        : order?.status === "delivered"
                         ? "bg-green-100 hover:bg-green-200"
                         : "bg-gray-50 hover:shadow-md"
                     } transition-all duration-200 space-y-4`}
                   >
                     {/* Order ID and Date */}
                     <div className="flex flex-col sm:flex-row justify-between text-sm sm:text-base text-gray-700 font-medium gap-1 sm:gap-0">
-                      <span className="break-all">Order ID: {order._id}</span>
+                      <span className="break-all">Order ID: {order?._id}</span>
                       <span>
-                        {new Date(order.createdAt).toLocaleDateString()}
+                        {new Date(order?.createdAt).toLocaleDateString()}
                       </span>
                     </div>
 
@@ -330,24 +345,24 @@ export default function Profile() {
                         Status:{" "}
                         <span
                           className={`capitalize ${
-                            order.status === "Processing"
+                            order?.status === "Processing"
                               ? "text-yellow-600"
-                              : order.status === "Shipped"
+                              : order?.status === "Shipped"
                               ? "text-blue-600"
-                              : order.status === "Delivered"
+                              : order?.status === "Delivered"
                               ? "text-green-600"
-                              : order.status === "Cancelled"
+                              : order?.status === "Cancelled"
                               ? "text-red-600"
                               : "text-gray-600"
                           }`}
                         >
-                          {order.status}
+                          {order?.status}
                         </span>
                       </span>
                       <span>
                         Total:{" "}
                         <span className="text-green-600">
-                          ₹{order.totalAmount}
+                          ₹{order?.totalAmount}
                         </span>
                       </span>
                     </div>

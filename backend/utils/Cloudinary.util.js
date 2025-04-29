@@ -10,7 +10,6 @@ cloudinary.config({
 });
 
 const uploadOnClodinary = async (localfilepath) => {
-
   try {
     const upload = await cloudinary.uploader.upload(localfilepath, {
       folder: "ECommerce",
@@ -18,10 +17,10 @@ const uploadOnClodinary = async (localfilepath) => {
 
     fs.unlinkSync(localfilepath);
 
-    return upload.url;
+    return upload.secure_url;
   } catch (error) {
     console.log(error);
-    fs.unlinkSync(localfilepath)
+    fs.unlinkSync(localfilepath);
   }
 };
 

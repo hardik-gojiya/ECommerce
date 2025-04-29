@@ -7,6 +7,7 @@ import {
   updateProfilePassword,
   addNewAdmin,
   checkAuth,
+  addShippingAddress,
 } from "../controllers/User.controller.js";
 import { AuthMiddleware } from "../middlewares/auth.middleware.js";
 
@@ -23,5 +24,6 @@ router.post(
   updateProfilePassword
 );
 router.post("/add-new-admin", AuthMiddleware, addNewAdmin);
+router.post("/addShippingAddress", AuthMiddleware, addShippingAddress);
 
 export default router;

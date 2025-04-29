@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { useToast } from "../../context/ToastContext";
+import { useLogin } from "../../context/LoginContext";
 
 function OrderPage({ setShowOrderModal, handlePlaceOrder }) {
   const { showError, showSuccess } = useToast();
+  const { shippingAdress } = useLogin();
 
   const [userDescription, setuserDescription] = useState("");
   const [shippingInfo, setShippingInfo] = useState({
-    street: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
+    street: shippingAdress.street || "",
+    city: shippingAdress.city || "",
+    state: shippingAdress.state || "",
+    postalCode: shippingAdress.postalCode || "",
+    country: shippingAdress.country || "",
     paymentType: "COD",
   });
 
@@ -42,6 +44,7 @@ function OrderPage({ setShowOrderModal, handlePlaceOrder }) {
                     setShippingInfo({
                       ...shippingInfo,
                       [field]: e.target.value,
+                      
                     })
                   }
                 />

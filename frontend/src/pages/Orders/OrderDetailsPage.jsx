@@ -59,13 +59,13 @@ function OrderDetailsPage() {
       {/* Shipping Address */}
       <div
         className={`p-5 rounded-xl border shadow-sm ${
-          order.status === "Processing"
+          order?.status === "Processing"
             ? "bg-teal-50 border-teal-300 text-teal-700"
-            : order.status === "Shipped"
+            : order?.status === "Shipped"
             ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-            : order.status === "Delivered"
+            : order?.status === "Delivered"
             ? "bg-slate-100 border-slate-300 text-slate-700"
-            : order.status === "Cancelled"
+            : order?.status === "Cancelled"
             ? "bg-rose-100 border-rose-300 text-rose-700"
             : "bg-gray-50 border-gray-300 text-gray-700"
         }`}
@@ -76,15 +76,15 @@ function OrderDetailsPage() {
         <div className="space-y-1 text-gray-700">
           <p>
             <span className="font-medium">Street:</span>{" "}
-            {order.shippingAdress.street}
+            {order?.shippingAdress?.street}
           </p>
           <p>
             <span className="font-medium">City:</span>{" "}
-            {order.shippingAdress.city}
+            {order?.shippingAdress?.city}
           </p>
           <p>
             <span className="font-medium">State:</span>{" "}
-            {order.shippingAdress.state}
+            {order?.shippingAdress?.state}
           </p>
         </div>
       </div>
@@ -96,28 +96,28 @@ function OrderDetailsPage() {
         </h3>
         {order.items.map((item) => (
           <Link
-            to={`/product/${item.product._id}`}
-            key={item._id}
+            to={`/product/${item?.product?._id}`}
+            key={item?._id}
             className="flex items-center gap-4 border rounded-xl p-4 bg-gray-50 hover:bg-gray-100 transition"
           >
             <img
-              src={item.product.image[0]}
-              alt={item.product.name}
+              src={item?.product?.image[0]}
+              alt={item?.product?.name}
               className="w-20 h-20 object-cover rounded-md"
             />
             <div className="flex-1">
               <p className="text-lg font-semibold text-gray-900">
-                {item.product.name}
+                {item?.product?.name}
               </p>
               <p className="text-sm text-gray-600 line-clamp-2">
-                {item.product.description}
+                {item?.product?.description}
               </p>
               <p className="text-sm text-gray-700 mt-1">
-                ₹{item.product.price} × {item.quantity}
+                ₹{item?.product?.price} × {item?.quantity}
               </p>
             </div>
             <p className="font-semibold text-blue-600 text-lg whitespace-nowrap">
-              ₹{item.product.price * item.quantity}
+              ₹{item?.product?.price * item?.quantity}
             </p>
           </Link>
         ))}

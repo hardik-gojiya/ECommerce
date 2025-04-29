@@ -55,7 +55,7 @@ export default function Products() {
       <h1 className="text-3xl font-bold mb-8 text-[#00b894]">All Products</h1>
       <input
         type="text"
-        className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500"
+        className="border border-gray-300 mb-4 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500"
         value={searchid}
         onChange={(e) => setSearchid(e.target.value)}
         placeholder="search product by id"
