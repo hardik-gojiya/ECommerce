@@ -14,23 +14,22 @@ export default function DeleteProduct() {
   const [EditProduct, setEditProduct] = useState(null);
   const [searchid, setSearchid] = useState("");
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let res = await api.get("/products/getAllProducts");
-        setProducts(res.data.products);
-      } catch (error) {
-        if (error.response) {
-          showError(
-            `Error: ${
-              error?.response?.data?.error || "Failed to fetch products"
-            }`
-          );
-        } else {
-          showError("An error occurred while fetching products.");
-        }
+  const fetchProducts = async () => {
+    try {
+      let res = await api.get("/products/getAllProducts");
+      setProducts(res.data.products);
+    } catch (error) {
+      if (error.response) {
+        showError(
+          `Error: ${error?.response?.data?.error || "Failed to fetch products"}`
+        );
+      } else {
+        showError("An error occurred while fetching products.");
       }
-    };
+    }
+  };
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -40,6 +39,7 @@ export default function DeleteProduct() {
         setLoading(true);
         let res = await api.delete(`/products/deleteProduct/${id}`);
         showSuccess(res.data.message || "Product deleted successfully!");
+        fetchProducts();
       } catch (error) {
         showError(error?.response?.data.error || "Error deleting product.");
       } finally {
@@ -88,7 +88,29 @@ export default function DeleteProduct() {
                   className="w-full h-40 object-cover mb-4 rounded"
                 />
                 <h3 className="text-lg font-medium">{product.name}</h3>
-                <p className="text-blue-600 font-semibold">{product.price}</p>
+                <p className="text-lg md:text-2xl mt-1">
+                  {product.discount > 0 ? (
+                    <>
+                      <span className="text-blue-500 font-bold mr-2">
+                        ₹{parseInt(product.finalPrice)}
+                      </span>
+                      <span className="line-through text-gray-500 text-base">
+                        ₹{product.price}
+                      </span>
+                      <span className="ml-2 text-green-600 text-sm font-medium">
+                        ({product.discount}% OFF)
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-blue-600 font-semibold">
+                      ₹{product.price}
+                    </span>
+                  )}
+                  <span className="text-sm text-gray-500 font-normal">
+                    {" "}
+                    / item
+                  </span>
+                </p>
               </Link>
 
               <div className="flex justify-between">

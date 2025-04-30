@@ -195,7 +195,9 @@ const fetchProductByCategory = async (req, res) => {
     return res.status(404).json({ error: "category not found" });
   }
 
-  let products = await Products.find({ category: category });
+  let products = await Products.find({
+    category: category._id.toString(),
+  }).populate("category");
   if (!products) {
     return res.json(404).json({ error: "no product found of this category" });
   }

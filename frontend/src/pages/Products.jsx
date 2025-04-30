@@ -82,7 +82,7 @@ export default function Products() {
                   {product.discount > 0 ? (
                     <>
                       <span className="text-blue-500 font-bold mr-2">
-                        ₹{product.finalPrice}
+                        ₹{parseInt(product.finalPrice)}
                       </span>
                       <span className="line-through text-gray-500 text-base">
                         ₹{product.price}
