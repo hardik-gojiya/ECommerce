@@ -15,6 +15,7 @@ import OrderDetailsPage from "./pages/Orders/OrderDetailsPage";
 import PasswordChangeCard from "./components/PasswordChangeCard";
 import AllOrderofOneUser from "./pages/Orders/AllOrderofOneUser";
 import SubCategoryProducts from "./pages/SubCategoryProducts";
+import NotFound from "./components/NotFound";
 
 function App() {
   const { role: userrole } = useLogin();
@@ -42,6 +43,7 @@ function App() {
         {userrole === "admin" || userrole === "master admin" ? (
           <Route path="/admin/*" element={<AdminDashboard />}></Route>
         ) : null}
+        <Route path="/*" element={<NotFound />} />
       </Routes>
       <Footer />
     </>
